@@ -66,16 +66,27 @@ export function createInterior(container) {
     scene.add(sun);
   }
 
-  async function loadGltf({ url, unlit }) {
+  async function loadGltf({ url, unlit, ceilingCut = 0.35 }) {
     const gltf = await new GLTFLoader().loadAsync(url);
     const model = gltf.scene;
-    if (unlit) {
-      model.traverse((o) => {
-        if (!o.isMesh) return;
-        const old = o.material;
-        o.material = new THREE.MeshBasicMaterial({ map: old.map ?? null, color: old.map ? 0xffffff : old.color, side: THREE.DoubleSide });
-      });
-    }
+
+    // Decke abschneiden, damit man von oben in den Raum schauen kann (Puppenhaus)
+    const box = new THREE.Box3().setFromObject(model);
+    const clip = ceilingCut > 0
+      ? [new THREE.Plane(new THREE.Vector3(0, -1, 0), box.max.y - ceilingCut)]
+      : [];
+    renderer.localClippingEnabled = clip.length > 0;
+
+    model.traverse((o) => {
+      if (!o.isMesh) return;
+      const old = o.material;
+      // FrontSide: Wände, die zur Kamera hin nach außen zeigen, werden ausgeblendet
+      o.material = unlit
+        ? new THREE.MeshBasicMaterial({ map: old.map ?? null, color: old.map ? 0xffffff : old.color })
+        : old;
+      o.material.side = THREE.FrontSide;
+      o.material.clippingPlanes = clip;
+    });
     addLights();
     scene.add(model);
     frameObject(model);

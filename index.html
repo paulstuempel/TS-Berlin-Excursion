@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kontext Atlas</title>
+
+  <!-- Cesium (3D-Globus, Google Photorealistic 3D Tiles) -->
+  <script>window.CESIUM_BASE_URL = 'https://cdn.jsdelivr.net/npm/cesium@1.146.0/Build/Cesium/';</script>
+  <script src="https://cdn.jsdelivr.net/npm/cesium@1.146.0/Build/Cesium/Cesium.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cesium@1.146.0/Build/Cesium/Widgets/widgets.css">
+
+  <!-- three.js (Innenraum, Polycam-Modelle) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"
+    }
+  }
+  </script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="stage">
+    <div id="earth"></div>
+    <div id="interior" hidden></div>
+    <div id="veil"></div>
+  </main>
+
+  <header id="place">
+    <p class="place-city" data-bind="name"></p>
+    <p class="place-address" data-bind="address"></p>
+  </header>
+
+  <nav id="levels" aria-label="Zoomstufen"></nav>
+
+  <p id="hint">Scrollen zum Zoomen, Ziehen zum Umsehen</p>
+  <p id="status" hidden></p>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

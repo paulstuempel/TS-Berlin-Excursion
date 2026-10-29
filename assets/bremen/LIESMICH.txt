@@ -1,0 +1,1 @@
+Hier den Polycam Export ablegen (interior.glb).

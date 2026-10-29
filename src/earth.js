@@ -1,23 +1,20 @@
-// Kartenansicht mit Cesium.
-// Mit Google-Key: fotorealistische 3D-Kacheln (wie Google Earth).
-// Ohne Key: Satellitenbild von Esri auf flachem Globus, damit die Mechanik testbar ist.
+// Ersatz-Kartenansicht mit Cesium, wenn kein Google Key eingetragen ist:
+// Satellitenbild von Esri auf flachem Globus, damit die Mechanik testbar ist.
+// (Googles Photorealistic 3D Tiles sind für Projekte im EWR gesperrt,
+// deshalb läuft die Google-Ansicht über earth-google.js.)
 
-const Cesium = window.Cesium;
-const rad = Cesium.Math.toRadians;
-
-export async function createEarth(container, { googleApiKey }) {
-  const useGoogle = Boolean(googleApiKey);
+export async function createEarth(container) {
+  const Cesium = window.Cesium;
+  const rad = Cesium.Math.toRadians;
 
   const viewer = new Cesium.Viewer(container, {
-    baseLayer: useGoogle
-      ? false
-      : new Cesium.ImageryLayer(
-          new Cesium.UrlTemplateImageryProvider({
-            url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-            maximumLevel: 19,
-            credit: new Cesium.Credit('Esri, Maxar, Earthstar Geographics'),
-          })
-        ),
+    baseLayer: new Cesium.ImageryLayer(
+      new Cesium.UrlTemplateImageryProvider({
+        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        maximumLevel: 19,
+        credit: new Cesium.Credit('Esri, Maxar, Earthstar Geographics'),
+      })
+    ),
     baseLayerPicker: false,
     geocoder: false,
     homeButton: false,
@@ -32,26 +29,12 @@ export async function createEarth(container, { googleApiKey }) {
   });
 
   const scene = viewer.scene;
-  scene.globe.show = !useGoogle;
   scene.globe.baseColor = Cesium.Color.fromCssColorString('#d9d6cf');
   scene.backgroundColor = Cesium.Color.fromCssColorString('#e9e6df');
   scene.skyBox.show = false;
   scene.sun.show = false;
   scene.moon.show = false;
   scene.fog.enabled = true;
-
-  if (useGoogle) {
-    try {
-      const tileset = await Cesium.createGooglePhotorealistic3DTileset(
-        { key: googleApiKey, onlyUsingWithGoogleGeocoder: true },
-        { maximumScreenSpaceError: 8 }
-      );
-      scene.primitives.add(tileset);
-    } catch (err) {
-      console.error('Google 3D Tiles konnten nicht geladen werden', err);
-      throw new Error('Google 3D Tiles nicht erreichbar. API Key und Map Tiles API prüfen.');
-    }
-  }
 
   // Steuerung: kein freies Zoomen und Verschieben, nur Umsehen um die Adresse
   const ssc = scene.screenSpaceCameraController;
@@ -174,5 +157,5 @@ export async function createEarth(container, { googleApiKey }) {
     ssc.enableInputs = on;
   }
 
-  return { viewer, setTarget, flyTo, pan, recenter, jumpToOverview, setInteractive, mode: useGoogle ? 'google' : 'fallback' };
+  return { viewer, setTarget, flyTo, pan, recenter, jumpToOverview, setInteractive, mode: 'fallback' };
 }

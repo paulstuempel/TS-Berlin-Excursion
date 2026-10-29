@@ -28,6 +28,15 @@ html, body {
 
 #earth[hidden], #interior[hidden] { display: none; }
 
+/* Zieh-Fläche über der Google-Karte; unten frei für Googles Quellenangaben */
+.drag-pad {
+  position: absolute;
+  inset: 0 0 40px 0;
+  cursor: grab;
+  touch-action: none;
+}
+.drag-pad:active { cursor: grabbing; }
+
 #interior canvas, #interior iframe {
   position: absolute;
   inset: 0;

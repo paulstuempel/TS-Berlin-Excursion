@@ -26,7 +26,7 @@ Dann `http://localhost:8000` öffnen. (Doppelklick auf `index.html` funktioniert
 
 Alles Wichtige steht in `src/config.js`:
 
-- `googleApiKey` für die fotorealistischen 3D-Kacheln. Ohne Key läuft ein Ersatzmodus mit flachem Satellitenbild.
+- `googleApiKey` für die fotorealistische 3D-Ansicht (Google 3D Maps). Ohne Key läuft ein Ersatzmodus mit Cesium und flachem Satellitenbild.
 - Adresse, Koordinaten und Bodenhöhe pro Ort
 - Abstand und Neigung jeder Stufe
 - Innenraum pro Ort (`gltf`, `panorama` oder `iframe`)
@@ -34,7 +34,7 @@ Alles Wichtige steht in `src/config.js`:
 ### Google API Key besorgen
 
 1. Auf console.cloud.google.com ein Projekt anlegen, Abrechnung aktivieren
-2. Unter "APIs & Dienste" die **Map Tiles API** aktivieren
+2. Unter "APIs & Dienste" die **Maps JavaScript API** aktivieren (die Map Tiles API mit den Photorealistic 3D Tiles ist für Projekte im EWR gesperrt, deshalb nutzt die Seite Googles 3D Maps)
 3. Unter "Anmeldedaten" einen API Key erstellen und auf die eigene Domain bzw. `localhost` beschränken
 4. Key in `src/config.js` eintragen
 
@@ -51,7 +51,8 @@ index.html        Gerüst
 style.css         Gestaltung
 src/config.js     Orte, Stufen, Keys
 src/main.js       Stufenlogik, Scrollen, Übergänge
-src/earth.js      Kartenansicht (Cesium)
+src/earth-google.js  Kartenansicht (Google 3D Maps)
+src/earth.js      Ersatz-Kartenansicht ohne Key (Cesium)
 src/interior.js   Innenraum (three.js)
 assets/<ort>/     3D-Scans und Bilder
 ```

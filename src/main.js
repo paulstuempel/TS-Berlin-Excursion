@@ -1,6 +1,29 @@
 import { config } from './config.js';
-import { createEarth } from './earth.js';
 import { createInterior } from './interior.js';
+
+// Kartenmodul wählen: mit Key Google 3D Maps, sonst Cesium mit flachem Satellitenbild
+const CESIUM = 'https://cdn.jsdelivr.net/npm/cesium@1.146.0/Build/Cesium/';
+
+function loadCesium() {
+  return new Promise((resolve, reject) => {
+    window.CESIUM_BASE_URL = CESIUM;
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = CESIUM + 'Widgets/widgets.css';
+    document.head.appendChild(css);
+    const s = document.createElement('script');
+    s.src = CESIUM + 'Cesium.js';
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('Cesium konnte nicht geladen werden.'));
+    document.head.appendChild(s);
+  });
+}
+
+async function loadEarthModule() {
+  if (config.googleApiKey) return import('./earth-google.js');
+  await loadCesium();
+  return import('./earth.js');
+}
 
 const $ = (s) => document.querySelector(s);
 const earthEl = $('#earth');
@@ -213,18 +236,22 @@ async function init() {
   bindInput();
   status('Lade Karte');
 
+  const pos = await locate(place);
   try {
-    earth = await createEarth(earthEl, config);
+    const { createEarth } = await loadEarthModule();
+    earth = await createEarth(earthEl, {
+      ...config,
+      places: { ...config.places, [config.startPlace]: { ...place, lat: pos.lat, lon: pos.lon } },
+    });
   } catch (err) {
+    console.error(err);
     status(err.message);
     return;
   }
   interior = createInterior(interiorEl);
   document.body.dataset.mode = earth.mode;
 
-  const pos = await locate(place);
-  const height = earth.mode === 'google' ? place.groundHeight : 0;
-  earth.setTarget({ ...pos, height });
+  earth.setTarget({ ...pos, height: 0 });
   earth.jumpToOverview(pos);
   status('');
 

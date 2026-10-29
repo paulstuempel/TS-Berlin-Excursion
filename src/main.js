@@ -230,6 +230,15 @@ function bindInput() {
 
 // ---------- Start ----------
 
+// Google meldet Probleme mit dem Key nur in der Konsole, hier werden sie sichtbar
+const consoleError = console.error.bind(console);
+console.error = (...args) => {
+  const msg = String(args[0] ?? '');
+  const m = msg.match(/Google Maps JavaScript API error: (\w+)/);
+  if (m) status(`Google Karte nicht verfügbar (${m[1]})`);
+  consoleError(...args);
+};
+
 async function init() {
   buildLevelNav();
   renderPlace();
@@ -255,14 +264,7 @@ async function init() {
   earth.jumpToOverview(pos);
   status('');
 
-  // Falls Google die Karte stumm verweigert (z. B. API nicht aktiviert), Hinweis zeigen
-  let arrived = false;
-  setTimeout(() => {
-    if (!arrived) status('Die Karte lädt nicht. Details stehen in der Browser-Konsole.');
-  }, 15000);
   await goTo(0);
-  arrived = true;
-  status('');
 }
 
 init();

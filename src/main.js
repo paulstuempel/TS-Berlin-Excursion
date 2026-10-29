@@ -255,7 +255,14 @@ async function init() {
   earth.jumpToOverview(pos);
   status('');
 
+  // Falls Google die Karte stumm verweigert (z. B. API nicht aktiviert), Hinweis zeigen
+  let arrived = false;
+  setTimeout(() => {
+    if (!arrived) status('Die Karte lädt nicht. Details stehen in der Browser-Konsole.');
+  }, 15000);
   await goTo(0);
+  arrived = true;
+  status('');
 }
 
 init();

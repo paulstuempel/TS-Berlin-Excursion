@@ -14,12 +14,12 @@ export const config = {
     bremen: {
       name: 'Bremen',
       address: 'Am Dobben 27 bis 32',
-      // Wird beim ersten Laden über OpenStreetMap gesucht und im Browser gespeichert.
-      // Die gefundenen Koordinaten stehen in der Browser-Konsole. Wenn du sie unten
-      // bei lat/lon einträgst und geocode auf false setzt, ist die Position fest.
-      geocode: 'Am Dobben 30, 28203 Bremen',
-      lat: 53.0779,          // ungefähr, wird durch geocode ersetzt
-      lon: 8.8235,
+      // Feste Position (über OpenStreetMap gefunden). Für einen neuen Ort kannst du
+      // geocode: 'Straße Nr, PLZ Stadt' setzen, dann wird die Adresse gesucht
+      // und die Koordinaten erscheinen in der Browser-Konsole.
+      geocode: false,
+      lat: 53.0776649,
+      lon: 8.8234398,
       // Innenraum ab Stufe 5
       //   type: 'gltf'      → eigene Datei aus Polycam (GLTF/GLB)
       //   type: 'panorama'  → 360°-Bild (equirektangulares JPG)

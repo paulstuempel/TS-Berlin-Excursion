@@ -114,6 +114,16 @@ html, body {
 #levels button.active .num { color: var(--accent); }
 #levels button:focus-visible { outline: 2px solid var(--accent); }
 
+#levels button { grid-template-columns: 28px auto auto; }
+#levels .sub { display: inline-flex; gap: 4px; margin-left: 4px; align-self: center; }
+#levels .sub i {
+  width: 5px; height: 5px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: .6;
+}
+#levels .sub i.on { background: var(--accent); border-color: var(--accent); opacity: 1; }
+
 /* ---------- Hinweise ---------- */
 
 #hint, #status, .interior-note {

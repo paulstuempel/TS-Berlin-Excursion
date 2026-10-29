@@ -62,6 +62,7 @@ function buildLevelNav() {
       <button type="button" data-level="${i}">
         <span class="num">${String(i + 1).padStart(2, '0')}</span>
         <span class="label">${l.label}</span>
+        ${l.interior ? '<span class="sub" aria-hidden="true"></span>' : ''}
       </button>`)
     .join('');
   nav.addEventListener('click', (e) => {
@@ -77,6 +78,14 @@ function renderLevelNav() {
     b.classList.toggle('inside', i < level);
   });
   document.body.dataset.level = levels[level]?.id ?? '';
+
+  // Punkte für die Zoomstufen im Innenraum
+  const sub = document.querySelector('#levels .sub');
+  if (sub && interior) {
+    const current = level === INTERIOR ? interior.step : -1;
+    sub.innerHTML = Array.from({ length: interior.steps }, (_, i) =>
+      `<i class="${i <= current ? 'on' : ''}"></i>`).join('');
+  }
 }
 
 function renderPlace() {
@@ -97,6 +106,9 @@ async function goTo(next) {
   renderLevelNav();
 
   try {
+    if (prev === INTERIOR && next < INTERIOR) {
+      await interior.recenter();
+    }
     if (next === INTERIOR) {
       // Erst ganz nah an die Fassade, dann überblenden
       if (prev !== LAST_MAP) await earth.flyTo(levels[LAST_MAP], config.flightDuration);
@@ -127,9 +139,29 @@ async function goTo(next) {
   }
 }
 
-// ---------- Eingabe: Scrollen in festen Schritten ----------
+// Im Innenraum gibt es eigene Zoomstufen, erst danach geht es zurück zur Karte
+async function step(dir) {
+  if (busy) return;
+  if (level === INTERIOR) {
+    if (dir > 0 || interior.step > 0) {
+      busy = true;
+      try {
+        await interior.zoom(dir);
+        renderLevelNav();
+      } finally {
+        await wait(250);
+        busy = false;
+      }
+      return;
+    }
+  }
+  goTo(level + dir);
+}
+
+// ---------- Eingabe ----------
 
 function bindInput() {
+  // Scrollen in festen Schritten, runter = näher heran
   let acc = 0;
   let idle;
   addEventListener('wheel', (e) => {
@@ -139,15 +171,38 @@ function bindInput() {
     clearTimeout(idle);
     idle = setTimeout(() => (acc = 0), 180);
     if (Math.abs(acc) > 40) {
-      goTo(level + Math.sign(acc));   // runter scrollen = näher heran
+      step(Math.sign(acc));
       acc = 0;
     }
   }, { passive: false });
 
+  // Pfeiltasten bewegen die Ansicht, solange sie gedrückt sind
+  const held = new Set();
+  const ARROWS = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+
   addEventListener('keydown', (e) => {
-    if (['ArrowDown', 'PageDown', '+'].includes(e.key)) goTo(level + 1);
-    if (['ArrowUp', 'PageUp', '-'].includes(e.key)) goTo(level - 1);
+    if (ARROWS.includes(e.key)) { held.add(e.key); e.preventDefault(); }
+    if (['+', 'PageDown'].includes(e.key)) step(1);
+    if (['-', 'PageUp'].includes(e.key)) step(-1);
   });
+  addEventListener('keyup', (e) => held.delete(e.key));
+  addEventListener('blur', () => held.clear());
+
+  let last = performance.now();
+  const loop = (now) => {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    if (held.size && !busy && level >= 0) {
+      const x = (held.has('ArrowRight') ? 1 : 0) - (held.has('ArrowLeft') ? 1 : 0);
+      const y = (held.has('ArrowUp') ? 1 : 0) - (held.has('ArrowDown') ? 1 : 0);
+      if (x || y) {
+        if (level === INTERIOR) interior.pan(x, y, dt);
+        else earth.pan(x, y, dt);
+      }
+    }
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
 }
 
 // ---------- Start ----------

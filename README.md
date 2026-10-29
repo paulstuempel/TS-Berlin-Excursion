@@ -10,7 +10,7 @@ Sketch für eine Webseite, die zwei Ausstellungsorte verbindet. Man scrollt in f
 | 04 Gebäude | ca. 230 m |
 | 05 Innenraum | eigener 3D-Scan (Polycam) |
 
-Scrollen oder Pfeiltasten wechseln die Stufe, Ziehen dreht die Ansicht um die Adresse.
+Scrollen (oder + und -) wechselt die Stufe, Ziehen dreht die Ansicht, Pfeiltasten bewegen sie. Beim Stufenwechsel zentriert sich die Ansicht erst wieder auf die Adresse und zoomt dann. Im Innenraum gibt es drei weitere Zoomstufen.
 
 ## Lokal ansehen
 

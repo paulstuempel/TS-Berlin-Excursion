@@ -63,10 +63,66 @@ export async function createEarth(container, { googleApiKey }) {
   ssc.enableCollisionDetection = true;
 
   let target = null;
+  let enu = null;                 // Ost/Nord/Oben-Achsen an der Adresse
+  let off = { e: 0, n: 0 };       // Verschiebung durch Pfeiltasten in Metern
   let marker = null;
+
+  const focusPoint = () => {
+    const east = Cesium.Matrix4.getColumn(enu, 0, new Cesium.Cartesian4());
+    const north = Cesium.Matrix4.getColumn(enu, 1, new Cesium.Cartesian4());
+    const p = Cesium.Cartesian3.clone(target);
+    Cesium.Cartesian3.add(p, Cesium.Cartesian3.multiplyByScalar(new Cesium.Cartesian3(east.x, east.y, east.z), off.e, new Cesium.Cartesian3()), p);
+    Cesium.Cartesian3.add(p, Cesium.Cartesian3.multiplyByScalar(new Cesium.Cartesian3(north.x, north.y, north.z), off.n, new Cesium.Cartesian3()), p);
+    return p;
+  };
+
+  // Aktuelle Kamera relativ zum Drehpunkt (gilt, solange lookAt aktiv ist)
+  const currentHpr = () => new Cesium.HeadingPitchRange(
+    viewer.camera.heading,
+    viewer.camera.pitch,
+    Cesium.Cartesian3.magnitude(viewer.camera.position)
+  );
+
+  // Pfeiltasten: x = rechts, y = vorwärts (je −1..1), Tempo passt sich der Stufe an
+  function pan(x, y, dt) {
+    if (!target) return;
+    const hpr = currentHpr();
+    const speed = hpr.range * 0.45;               // m pro Sekunde
+    const h = hpr.heading;
+    const de = (Math.cos(h) * x + Math.sin(h) * y) * speed * dt;
+    const dn = (-Math.sin(h) * x + Math.cos(h) * y) * speed * dt;
+    const e = off.e + de, n = off.n + dn;
+    if (Math.hypot(e, n) > hpr.range * 1.5) return;   // nicht verloren gehen
+    off = { e, n };
+    viewer.camera.lookAt(focusPoint(), hpr);
+  }
+
+  // Zurück auf die Adresse gleiten, Blickrichtung und Abstand bleiben
+  function recenter(duration = 0.7) {
+    if (Math.hypot(off.e, off.n) < 0.5) {
+      off = { e: 0, n: 0 };
+      return Promise.resolve();
+    }
+    const start = { ...off };
+    const hpr = currentHpr();
+    return new Promise((resolve) => {
+      const t0 = performance.now();
+      const tick = (now) => {
+        const t = Math.min(1, (now - t0) / (duration * 1000));
+        const k = 1 - (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+        off = { e: start.e * k, n: start.n * k };
+        viewer.camera.lookAt(focusPoint(), hpr);
+        if (t < 1) requestAnimationFrame(tick);
+        else resolve();
+      };
+      requestAnimationFrame(tick);
+    });
+  }
 
   function setTarget({ lat, lon, height }) {
     target = Cesium.Cartesian3.fromDegrees(lon, lat, height);
+    enu = Cesium.Transforms.eastNorthUpToFixedFrame(target);
+    off = { e: 0, n: 0 };
     if (marker) viewer.entities.remove(marker);
     marker = viewer.entities.add({
       position: target,
@@ -82,7 +138,9 @@ export async function createEarth(container, { googleApiKey }) {
 
   // Kamera auf eine Stufe bringen: immer auf die Adresse zentriert,
   // die Blickrichtung (heading), die man sich gedreht hat, bleibt erhalten.
-  function flyTo({ range, pitch }, duration = 1.8) {
+  async function flyTo({ range, pitch }, duration = 1.8) {
+    await recenter();   // erst auf die Adresse zentrieren, dann zoomen
+    off = { e: 0, n: 0 };
     const camera = viewer.camera;
     const heading = camera.heading;
     const offset = new Cesium.HeadingPitchRange(heading, rad(pitch), range);
@@ -116,5 +174,5 @@ export async function createEarth(container, { googleApiKey }) {
     ssc.enableInputs = on;
   }
 
-  return { viewer, setTarget, flyTo, jumpToOverview, setInteractive, mode: useGoogle ? 'google' : 'fallback' };
+  return { viewer, setTarget, flyTo, pan, recenter, jumpToOverview, setInteractive, mode: useGoogle ? 'google' : 'fallback' };
 }

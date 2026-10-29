@@ -45,18 +45,93 @@ export function createInterior(container) {
     note.textContent = '';
   }
 
+  // ---------- Kamera: Zoomstufen im Raum, Bewegen, Zurückzentrieren ----------
+
+  // Abstand zur Raummitte je Zoomstufe, als Anteil des Überblicks
+  const ZOOM_STEPS = [1, 0.55, 0.28];
+  let home = null;        // { center, radius, dist }
+  let step = 0;
+  let isPanorama = false;
+
+  const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+
+  function animate(duration, fn) {
+    return new Promise((resolve) => {
+      const t0 = performance.now();
+      const tick = (now) => {
+        const t = Math.min(1, (now - t0) / (duration * 1000));
+        fn(ease(t));
+        if (t < 1) requestAnimationFrame(tick);
+        else resolve();
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+
   // Modell so platzieren, dass man von schräg oben in den Raum schaut (Puppenhaus-Blick)
   function frameObject(obj) {
     const box = new THREE.Box3().setFromObject(obj);
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
     const radius = Math.max(size.x, size.y, size.z) * 0.5;
+    const offset = new THREE.Vector3(radius * 0.9, radius * 1.1, radius * 1.4);
+    home = { center, radius, offset, dist: offset.length() };
+    step = 0;
     controls.target.copy(center);
-    camera.position.copy(center).add(new THREE.Vector3(radius * 0.9, radius * 1.1, radius * 1.4));
-    camera.near = radius / 200;
+    camera.position.copy(center).add(offset);
+    camera.near = radius / 400;
     camera.far = radius * 40;
     camera.updateProjectionMatrix();
     controls.update();
+  }
+
+  // Zurück zur Raummitte, Blickrichtung und Abstand bleiben
+  async function recenter(duration = 0.6) {
+    if (!home || isPanorama) return;
+    const shift = home.center.clone().sub(controls.target);
+    if (shift.length() < home.radius * 0.01) return;
+    const t0 = controls.target.clone();
+    const c0 = camera.position.clone();
+    await animate(duration, (t) => {
+      controls.target.copy(t0).addScaledVector(shift, t);
+      camera.position.copy(c0).addScaledVector(shift, t);
+    });
+  }
+
+  // Eine Zoomstufe im Raum weiter (dir = +1 näher, −1 weiter weg)
+  async function zoom(dir) {
+    const next = step + dir;
+    if (next < 0 || next >= ZOOM_STEPS.length) return false;
+    step = next;
+    if (isPanorama) {
+      const f0 = camera.fov, f1 = 55 * ZOOM_STEPS[step] ** 0.6;
+      await animate(0.8, (t) => { camera.fov = f0 + (f1 - f0) * t; camera.updateProjectionMatrix(); });
+      return true;
+    }
+    await recenter();
+    const dirVec = camera.position.clone().sub(controls.target).normalize();
+    const d0 = camera.position.distanceTo(controls.target);
+    const d1 = home.dist * ZOOM_STEPS[step];
+    await animate(1.0, (t) => {
+      camera.position.copy(controls.target).addScaledVector(dirVec, d0 + (d1 - d0) * t);
+    });
+    return true;
+  }
+
+  // Mit Pfeiltasten über den Boden bewegen; x = rechts, y = vorwärts (je −1..1)
+  function pan(x, y, dt) {
+    if (!home || isPanorama) return;
+    const forward = controls.target.clone().sub(camera.position);
+    forward.y = 0;
+    forward.normalize();
+    const right = new THREE.Vector3().crossVectors(forward, camera.up).normalize();
+    const speed = home.radius * 0.6 * (ZOOM_STEPS[step] + 0.3);   // m pro Sekunde
+    const move = right.multiplyScalar(x * speed * dt).addScaledVector(forward, y * speed * dt);
+    // nicht weiter als bis knapp über den Raum hinaus
+    const next = controls.target.clone().add(move);
+    if (next.distanceTo(home.center) > home.radius * 1.2) return;
+    controls.target.add(move);
+    camera.position.add(move);
   }
 
   function addLights() {
@@ -101,6 +176,10 @@ export function createInterior(container) {
     );
     sphere.scale.x = -1; // Kugel umstülpen, damit man von innen das Bild sieht
     scene.add(sphere);
+    isPanorama = true;
+    step = 0;
+    camera.fov = 55;
+    camera.updateProjectionMatrix();
     controls.target.set(0, 0, 0);
     camera.position.set(0, 0, 0.01);
     controls.rotateSpeed = -0.35;
@@ -187,6 +266,7 @@ export function createInterior(container) {
 
     if (loadedKey !== key) {
       clearScene();
+      isPanorama = false;
       try {
         if (interiorCfg.type === 'panorama') await loadPanorama(interiorCfg);
         else await loadGltf(interiorCfg);
@@ -195,6 +275,15 @@ export function createInterior(container) {
         buildPlaceholder(`Platzhalter. Lege den Export aus Polycam unter ${interiorCfg.url} ab.`);
       }
       loadedKey = key;
+    } else if (home && !isPanorama) {
+      // Beim erneuten Betreten wieder im Überblick starten
+      step = 0;
+      controls.target.copy(home.center);
+      camera.position.copy(home.center).add(home.offset);
+    } else if (isPanorama) {
+      step = 0;
+      camera.fov = 55;
+      camera.updateProjectionMatrix();
     }
     startLoop();
   }
@@ -203,5 +292,9 @@ export function createInterior(container) {
     stopLoop();
   }
 
-  return { show, hide };
+  return {
+    show, hide, zoom, pan, recenter,
+    get step() { return step; },
+    steps: ZOOM_STEPS.length,
+  };
 }

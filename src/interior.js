@@ -18,6 +18,9 @@ export function createInterior(container) {
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.prepend(renderer.domElement);
+    // Falls der Browser den WebGL-Kontext entzieht (z. B. wegen der Google-Karte), neu zeichnen
+    renderer.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault());
+    renderer.domElement.addEventListener('webglcontextrestored', () => { if (frame) startLoop(); });
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color('#e9e6df');
@@ -228,9 +231,25 @@ export function createInterior(container) {
     note.textContent = message;
   }
 
+  // Schutz gegen ein leeres Bild: Leinwand ohne Größe oder kaputte Kamera
+  function sanityCheck() {
+    const w = container.clientWidth, h = container.clientHeight;
+    const size = renderer.getSize(new THREE.Vector2());
+    if (w && h && (size.x !== w || size.y !== h)) resize();
+    const p = camera.position;
+    const broken = !Number.isFinite(p.x + p.y + p.z) ||
+      !Number.isFinite(controls.target.x + controls.target.y + controls.target.z) ||
+      p.distanceTo(controls.target) < 1e-3;
+    if (broken && home) {
+      controls.target.copy(home.center);
+      camera.position.copy(home.center).add(home.offset);
+    }
+  }
+
   function startLoop() {
-    if (frame) return;
+    if (frame) cancelAnimationFrame(frame);
     const tick = () => {
+      sanityCheck();
       controls.update();
       renderer.render(scene, camera);
       frame = requestAnimationFrame(tick);

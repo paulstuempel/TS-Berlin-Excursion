@@ -66,7 +66,7 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
     if (!drag || animating) return;
     const dx = e.clientX - drag.x;
     const dy = e.clientY - drag.y;
-    // Richtung wie im Raum: Ziehen nach rechts dreht nach rechts, nach unten kippt die Ansicht flacher
+    // Richtung wie im Raum: Ziehen nach rechts dreht nach rechts, nach unten schaut man steiler von oben (wie im Raum)
     map.heading = (drag.h + dx * 0.25 + 360) % 360;
     map.tilt = Math.max(0, Math.min(85, drag.t - dy * 0.2));
   });

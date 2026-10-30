@@ -18,11 +18,12 @@ export const config = {
       // geocode: 'Straße Nr, PLZ Stadt' setzen, dann wird die Adresse gesucht
       // und die Koordinaten erscheinen in der Browser-Konsole.
       geocode: false,
-      lat: 53.0776649,
-      lon: 8.8234398,
-      // Höhe des Punkts und Drehpunkts über dem Boden in Metern (etwa Dachhöhe),
-      // damit der Punkt nicht im Gebäude verschwindet
-      focusHeight: 18,
+      // Punkt an der Gebäudeecke (Kreuzung), etwas vor der Fassade:
+      // dort liegt der Ausstellungsraum im Erdgeschoss
+      lat: 53.077964,
+      lon: 8.82334,
+      // Höhe des Punkts und Drehpunkts über dem Boden in Metern (Erdgeschoss)
+      focusHeight: 3,
       // Innenraum ab Stufe 5
       //   type: 'gltf'      → eigene Datei aus Polycam (GLTF/GLB)
       //   type: 'panorama'  → 360°-Bild (equirektangulares JPG)
@@ -40,7 +41,7 @@ export const config = {
   // pitch = Neigung in Grad (−90 senkrecht von oben, 0 waagerecht).
   levels: [
     { id: 'city',     label: 'City',     range: 16000, pitch: -60 },
-    { id: 'district', label: 'District', range: 4200,  pitch: -52 },
+    { id: 'district', label: 'District', range: 1700,  pitch: -50 },
     { id: 'street',   label: 'Street',   range: 230,   pitch: -28 },
     { id: 'building', label: 'Building', range: 85,    pitch: -38 },
     { id: 'room',     label: 'Room',     interior: true },

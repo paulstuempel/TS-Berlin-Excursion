@@ -60,21 +60,6 @@ html, body {
 }
 .drag-pad:active { cursor: grabbing; }
 
-.focus-dot {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 22px;
-  height: 22px;
-  margin: -11px 0 0 -11px;
-  border-radius: 50%;
-  background: #ff4b1f;
-  border: 3px solid #fff;
-  pointer-events: none;
-  transition: opacity .2s;
-}
-.focus-dot.off { opacity: 0; }
-
 #interior canvas, #interior iframe {
   position: absolute;
   inset: 0;
@@ -163,12 +148,12 @@ html, body {
 #hint, #status, .interior-note {
   position: fixed;
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   --stroke: 3px;
 }
-#hint { right: 28px; bottom: 44px; text-align: right; }
+#hint { right: 12px; bottom: 9px; text-align: right; font-size: 15px; line-height: 1.25; }
 #status { top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; text-align: center; }
-.interior-note { right: 28px; bottom: 66px; text-align: right; }
+.interior-note { right: 12px; bottom: 56px; text-align: right; }
 
 @media (max-width: 640px) {
   #place { top: 16px; left: 16px; }

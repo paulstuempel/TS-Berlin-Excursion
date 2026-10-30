@@ -43,20 +43,7 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
   pad.className = 'drag-pad';
   container.appendChild(pad);
 
-  // Der orangene Punkt als HTML über der Karte, damit kein Gebäude ihn verdeckt.
-  // Die Kamera dreht sich immer um die Adresse, deshalb sitzt sie in der Bildmitte.
-  // Nur wenn man mit den Pfeiltasten wegfährt, übernimmt der Marker in der Karte.
   let marker = null;
-  const dot = document.createElement('div');
-  dot.className = 'focus-dot';
-  container.appendChild(dot);
-  const showDot = (on) => {
-    dot.classList.toggle('off', !on);
-    // Den Marker in der Karte nur zeigen, solange der HTML-Punkt aus ist (sonst doppelt)
-    if (!marker) return;
-    if (on) marker.remove();
-    else if (!marker.isConnected) map.append(marker);
-  };
 
   let target = null;           // { lat, lng }
   let off = { e: 0, n: 0 };    // Verschiebung durch Pfeiltasten in Metern
@@ -118,7 +105,7 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
       position: { lat, lng: lon, altitude: focusHeight },
       altitudeMode: 'RELATIVE_TO_GROUND',
     });
-    // Sichtbar bleiben, auch wenn ein Gebäude davor steht; immer gleich groß
+    // Wird ein Gebäude davor gezeichnet, erscheint der Punkt halb transparent; immer gleich groß
     for (const [k, v] of [['drawsWhenOccluded', true], ['sizePreserved', true]]) {
       try { marker[k] = v; } catch {}
     }
@@ -133,7 +120,7 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
     const tpl = document.createElement('template');
     tpl.content.append(dotImg);
     marker.append(tpl);
-    showDot(true);
+    map.append(marker);
   }
 
   // Pfeiltasten: x = rechts, y = vorwärts (je −1..1), Tempo passt sich der Stufe an
@@ -146,7 +133,6 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
     const n = off.n + (-Math.sin(h) * x + Math.cos(h) * y) * speed * dt;
     if (Math.hypot(e, n) > range * 1.5) return;
     off = { e, n };
-    showDot(false);
     map.center = focus();
   }
 
@@ -157,7 +143,6 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
     }
     off = { e: 0, n: 0 };
     await fly({ center: focus(), range: map.range, tilt: map.tilt, heading: map.heading }, duration);
-    showDot(true);
   }
 
   // Stufe anfliegen: erst zentrieren, dann zoomen; die gedrehte Blickrichtung bleibt

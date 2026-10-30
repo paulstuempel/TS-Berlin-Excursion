@@ -46,14 +46,20 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
   // Der orangene Punkt als HTML über der Karte, damit kein Gebäude ihn verdeckt.
   // Die Kamera dreht sich immer um die Adresse, deshalb sitzt sie in der Bildmitte.
   // Nur wenn man mit den Pfeiltasten wegfährt, übernimmt der Marker in der Karte.
+  let marker = null;
   const dot = document.createElement('div');
   dot.className = 'focus-dot';
   container.appendChild(dot);
-  const showDot = (on) => dot.classList.toggle('off', !on);
+  const showDot = (on) => {
+    dot.classList.toggle('off', !on);
+    // Den Marker in der Karte nur zeigen, solange der HTML-Punkt aus ist (sonst doppelt)
+    if (!marker) return;
+    if (on) marker.remove();
+    else if (!marker.isConnected) map.append(marker);
+  };
 
   let target = null;           // { lat, lng }
   let off = { e: 0, n: 0 };    // Verschiebung durch Pfeiltasten in Metern
-  let marker = null;
   let animating = false;
 
   const focus = () => ({
@@ -117,17 +123,17 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
       try { marker[k] = v; } catch {}
     }
     // Statt Googles Pin ein schlichter orangener Punkt
-    const dot = document.createElement('img');
-    dot.src = 'data:image/svg+xml,' + encodeURIComponent(
+    const dotImg = document.createElement('img');
+    dotImg.src = 'data:image/svg+xml,' + encodeURIComponent(
       '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">' +
       '<circle cx="12" cy="12" r="9.5" fill="#ff4b1f" stroke="#fff" stroke-width="3"/></svg>'
     );
-    dot.width = 24;
-    dot.height = 24;
+    dotImg.width = 24;
+    dotImg.height = 24;
     const tpl = document.createElement('template');
-    tpl.content.append(dot);
+    tpl.content.append(dotImg);
     marker.append(tpl);
-    map.append(marker);
+    showDot(true);
   }
 
   // Pfeiltasten: x = rechts, y = vorwärts (je −1..1), Tempo passt sich der Stufe an

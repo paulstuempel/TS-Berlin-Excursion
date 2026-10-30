@@ -20,10 +20,10 @@ export const config = {
       geocode: false,
       // Punkt an der Gebäudeecke (Kreuzung), etwas vor der Fassade:
       // dort liegt der Ausstellungsraum im Erdgeschoss
-      lat: 53.077964,
-      lon: 8.82334,
+      lat: 53.077948,
+      lon: 8.823404,
       // Höhe des Punkts und Drehpunkts über dem Boden in Metern (Erdgeschoss)
-      focusHeight: 3,
+      focusHeight: 1.5,
       // Blickrichtung beim Start in Grad (0 = von Süden nach Norden schauen).
       // 215 schaut von der Kreuzung im Nordosten auf die Ecke mit dem Raum
       heading: 215,

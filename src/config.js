@@ -24,6 +24,9 @@ export const config = {
       lon: 8.82334,
       // Höhe des Punkts und Drehpunkts über dem Boden in Metern (Erdgeschoss)
       focusHeight: 3,
+      // Blickrichtung beim Start in Grad (0 = von Süden nach Norden schauen).
+      // 215 schaut von der Kreuzung im Nordosten auf die Ecke mit dem Raum
+      heading: 215,
       // Innenraum ab Stufe 5
       //   type: 'gltf'      → eigene Datei aus Polycam (GLTF/GLB)
       //   type: 'panorama'  → 360°-Bild (equirektangulares JPG)

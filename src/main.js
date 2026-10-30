@@ -261,7 +261,7 @@ async function init() {
   document.body.dataset.mode = earth.mode;
 
   earth.setTarget({ ...pos, height: 0, focusHeight: place.focusHeight });
-  earth.jumpToOverview(pos);
+  earth.jumpToOverview({ ...pos, heading: place.heading ?? 0 });
   status('');
 
   await goTo(0);

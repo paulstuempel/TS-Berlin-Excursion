@@ -151,8 +151,8 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
     await fly({ center: focus(), range, tilt: 90 + pitch, heading: map.heading ?? 0 }, duration);
   }
 
-  function jumpToOverview({ lat, lon }) {
-    Object.assign(map, { center: { lat, lng: lon, altitude: 0 }, range: 900000, tilt: 0, heading: 0 });
+  function jumpToOverview({ lat, lon, heading = 0 }) {
+    Object.assign(map, { center: { lat, lng: lon, altitude: 0 }, range: 900000, tilt: 0, heading });
   }
 
   return { setTarget, flyTo, pan, recenter, jumpToOverview, mode: 'google3d' };

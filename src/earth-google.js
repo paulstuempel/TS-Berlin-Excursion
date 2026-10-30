@@ -95,12 +95,12 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
     });
   }
 
-  function setTarget({ lat, lon }) {
-    target = { lat, lng: lon, altitude: 0 };
+  function setTarget({ lat, lon, focusHeight = 0 }) {
+    target = { lat, lng: lon, altitude: focusHeight };
     off = { e: 0, n: 0 };
     if (marker) marker.remove();
     marker = new Marker3DElement({
-      position: { lat, lng: lon, altitude: 2 },
+      position: { lat, lng: lon, altitude: focusHeight },
       altitudeMode: 'RELATIVE_TO_GROUND',
     });
     // Sichtbar bleiben, auch wenn ein Gebäude davor steht; immer gleich groß

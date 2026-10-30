@@ -260,7 +260,7 @@ async function init() {
   interior = createInterior(interiorEl);
   document.body.dataset.mode = earth.mode;
 
-  earth.setTarget({ ...pos, height: 0 });
+  earth.setTarget({ ...pos, height: 0, focusHeight: place.focusHeight });
   earth.jumpToOverview(pos);
   status('');
 

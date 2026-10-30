@@ -20,6 +20,9 @@ export const config = {
       geocode: false,
       lat: 53.0776649,
       lon: 8.8234398,
+      // Höhe des Punkts und Drehpunkts über dem Boden in Metern (etwa Dachhöhe),
+      // damit der Punkt nicht im Gebäude verschwindet
+      focusHeight: 18,
       // Innenraum ab Stufe 5
       //   type: 'gltf'      → eigene Datei aus Polycam (GLTF/GLB)
       //   type: 'panorama'  → 360°-Bild (equirektangulares JPG)
@@ -39,7 +42,7 @@ export const config = {
     { id: 'city',     label: 'City',     range: 16000, pitch: -60 },
     { id: 'district', label: 'District', range: 4200,  pitch: -52 },
     { id: 'street',   label: 'Street',   range: 230,   pitch: -28 },
-    { id: 'building', label: 'Building', range: 45,    pitch: -18 },
+    { id: 'building', label: 'Building', range: 85,    pitch: -38 },
     { id: 'room',     label: 'Room',     interior: true },
   ],
 

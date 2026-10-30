@@ -43,6 +43,14 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
   pad.className = 'drag-pad';
   container.appendChild(pad);
 
+  // Der orangene Punkt als HTML über der Karte, damit kein Gebäude ihn verdeckt.
+  // Die Kamera dreht sich immer um die Adresse, deshalb sitzt sie in der Bildmitte.
+  // Nur wenn man mit den Pfeiltasten wegfährt, übernimmt der Marker in der Karte.
+  const dot = document.createElement('div');
+  dot.className = 'focus-dot';
+  container.appendChild(dot);
+  const showDot = (on) => dot.classList.toggle('off', !on);
+
   let target = null;           // { lat, lng }
   let off = { e: 0, n: 0 };    // Verschiebung durch Pfeiltasten in Metern
   let marker = null;
@@ -65,8 +73,9 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
     if (!drag || animating) return;
     const dx = e.clientX - drag.x;
     const dy = e.clientY - drag.y;
-    map.heading = (drag.h - dx * 0.25 + 360) % 360;
-    map.tilt = Math.max(0, Math.min(85, drag.t - dy * 0.2));
+    // Richtung wie im Raum: Ziehen nach rechts dreht die Ansicht nach rechts
+    map.heading = (drag.h + dx * 0.25 + 360) % 360;
+    map.tilt = Math.max(0, Math.min(85, drag.t + dy * 0.2));
   });
   const end = () => (drag = null);
   pad.addEventListener('pointerup', end);
@@ -131,6 +140,7 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
     const n = off.n + (-Math.sin(h) * x + Math.cos(h) * y) * speed * dt;
     if (Math.hypot(e, n) > range * 1.5) return;
     off = { e, n };
+    showDot(false);
     map.center = focus();
   }
 
@@ -141,6 +151,7 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
     }
     off = { e: 0, n: 0 };
     await fly({ center: focus(), range: map.range, tilt: map.tilt, heading: map.heading }, duration);
+    showDot(true);
   }
 
   // Stufe anfliegen: erst zentrieren, dann zoomen; die gedrehte Blickrichtung bleibt

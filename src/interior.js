@@ -23,7 +23,7 @@ export function createInterior(container) {
     renderer.domElement.addEventListener('webglcontextrestored', () => { if (frame) startLoop(); });
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color('#e9e6df');
+    scene.background = new THREE.Color('#1c1a17'); // sehr dunkles, warmes Grau
     camera = new THREE.PerspectiveCamera(55, 1, 0.05, 500);
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableZoom = false;   // Mausrad gehört der Stufennavigation

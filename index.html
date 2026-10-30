@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,14 +27,14 @@
   </main>
 
   <header id="place">
-    <p class="place-city" data-bind="name"></p>
-    <p class="place-address" data-bind="address"></p>
+    <p class="place-city outlined" data-bind="name"></p>
+    <p class="place-address outlined" data-bind="address"></p>
   </header>
 
-  <nav id="levels" aria-label="Zoomstufen"></nav>
+  <nav id="levels" aria-label="Zoom levels"></nav>
 
-  <p id="hint">Scrollen zum Zoomen, Ziehen zum Umsehen, Pfeiltasten zum Bewegen</p>
-  <p id="status" hidden></p>
+  <p id="hint" class="outlined">Scroll to zoom, drag to look around, arrow keys to move</p>
+  <p id="status" class="outlined" hidden></p>
 
   <script type="module" src="src/main.js"></script>
 </body>

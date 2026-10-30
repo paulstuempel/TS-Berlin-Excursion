@@ -1,10 +1,24 @@
+@font-face {
+  font-family: "Ease";
+  src: url("assets/fonts/EaseDoubleRounded-Regular.woff2") format("woff2"),
+       url("assets/fonts/EaseDoubleRounded-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Ease";
+  src: url("assets/fonts/EaseDoubleRounded-Semibold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --paper: #e9e6df;
-  --ink: #141414;
-  --muted: #8d887e;
-  --accent: #ff4b1f;
-  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --black: #000;
+  --white: #fff;
+  --font: "Ease", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -14,9 +28,18 @@ html, body {
   height: 100%;
   overflow: hidden;
   background: var(--paper);
-  color: var(--ink);
+  color: var(--black);
   font-family: var(--font);
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Weiße Schrift mit schwarzem Rand, lesbar auf jedem Kartenausschnitt */
+.outlined {
+  color: var(--white);
+  -webkit-text-stroke: var(--stroke, 3px) var(--black);
+  paint-order: stroke fill;
 }
 
 /* ---------- Bühne ---------- */
@@ -28,7 +51,7 @@ html, body {
 
 #earth[hidden], #interior[hidden] { display: none; }
 
-/* Zieh-Fläche über der Google-Karte; unten frei für Googles Quellenangaben */
+/* Zieh-Fläche über der Google-Karte; unten frei für Googles Logo und Quellenangaben */
 .drag-pad {
   position: absolute;
   inset: 0 0 40px 0;
@@ -56,14 +79,8 @@ html, body {
 }
 #veil.on { opacity: 1; }
 
-/* Cesium-Bedienelemente ausblenden, Quellenangaben klein lassen */
-.cesium-viewer-bottom {
-  left: auto !important;
-  right: 12px;
-  bottom: 8px !important;
-  opacity: .7;
-  font-size: 10px;
-}
+/* Cesium (nur Ersatzmodus ohne Key) */
+.cesium-viewer-bottom { left: auto !important; right: 12px; bottom: 8px !important; font-size: 10px; }
 .cesium-credit-logoContainer img { height: 16px; }
 .cesium-widget-credits { display: flex; align-items: center; gap: 6px; }
 
@@ -71,19 +88,21 @@ html, body {
 
 #place {
   position: fixed;
-  top: 24px;
+  top: 22px;
   left: 28px;
   pointer-events: none;
 }
 #place p { margin: 0; line-height: 1.05; }
 .place-city {
-  font-size: clamp(28px, 4vw, 52px);
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  --stroke: 7px;
+  font-size: clamp(32px, 4.4vw, 58px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 .place-address {
+  --stroke: 4px;
   margin-top: 6px !important;
-  font-size: 15px;
+  font-size: 17px;
 }
 
 /* ---------- Stufen ---------- */
@@ -102,54 +121,44 @@ html, body {
   all: unset;
   cursor: pointer;
   display: grid;
-  grid-template-columns: 28px auto;
+  grid-template-columns: 26px auto auto;
   align-items: baseline;
   gap: 10px;
-  padding: 6px 12px;
-  background: rgba(233, 230, 223, .78);
-  backdrop-filter: blur(6px);
-  color: var(--muted);
+  padding: 7px 14px 7px 12px;
+  background: var(--white);
+  color: var(--black);
+  font-family: var(--font);
   font-size: 15px;
-  transition: color .3s, background .3s, padding .3s;
+  transition: color .25s, background .25s;
 }
-#levels button .num { font-family: var(--mono); font-size: 11px; }
-#levels button:hover { color: var(--ink); }
-#levels button.inside { color: var(--ink); }
-#levels button.active {
-  background: var(--ink);
-  color: var(--paper);
-  box-shadow: inset 4px 0 0 var(--accent);
-}
-#levels button.active .num { color: var(--accent); }
-#levels button:focus-visible { outline: 2px solid var(--accent); }
+#levels button .num { font-weight: 600; font-size: 12px; font-variant-numeric: tabular-nums; }
+#levels button.active { background: var(--black); color: var(--white); }
+#levels button:focus-visible { outline: 2px solid var(--black); outline-offset: 2px; }
 
-#levels button { grid-template-columns: 28px auto auto; }
 #levels .sub { display: inline-flex; gap: 4px; margin-left: 4px; align-self: center; }
 #levels .sub i {
-  width: 5px; height: 5px;
+  width: 6px; height: 6px;
   border: 1px solid currentColor;
   border-radius: 50%;
-  opacity: .6;
 }
-#levels .sub i.on { background: var(--accent); border-color: var(--accent); opacity: 1; }
+#levels .sub i.on { background: currentColor; }
 
 /* ---------- Hinweise ---------- */
 
 #hint, #status, .interior-note {
   position: fixed;
-  left: 28px;
   margin: 0;
-  font-size: 12px;
-  font-family: var(--mono);
+  font-size: 13px;
+  --stroke: 3px;
 }
-#hint { bottom: 20px; color: var(--ink); opacity: .7; }
-#status { top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 14px; }
-.interior-note { bottom: 44px; color: var(--accent); }
+#hint { right: 28px; bottom: 44px; text-align: right; }
+#status { top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; text-align: center; }
+.interior-note { right: 28px; bottom: 66px; text-align: right; }
 
 @media (max-width: 640px) {
   #place { top: 16px; left: 16px; }
   #levels { right: 12px; }
   #levels button .label { display: none; }
   #levels button { grid-template-columns: auto; }
-  #hint { left: 16px; }
+  #hint { right: 16px; left: 16px; }
 }

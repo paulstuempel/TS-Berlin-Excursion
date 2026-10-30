@@ -13,7 +13,7 @@ export const config = {
   places: {
     bremen: {
       name: 'Bremen',
-      address: 'Am Dobben 27 bis 32',
+      address: 'Am Dobben 27 to 32',
       // Feste Position (über OpenStreetMap gefunden). Für einen neuen Ort kannst du
       // geocode: 'Straße Nr, PLZ Stadt' setzen, dann wird die Adresse gesucht
       // und die Koordinaten erscheinen in der Browser-Konsole.
@@ -28,19 +28,19 @@ export const config = {
         type: 'gltf',
         url: 'assets/bremen/interior.glb',
         unlit: true,          // Polycam-Texturen enthalten schon das Licht
-        ceilingCut: 0.9,      // so viele Meter werden oben abgeschnitten (0 = Decke bleibt)
+        ceilingCut: 0.35,     // so viele Meter werden oben abgeschnitten (0 = Decke bleibt)
       },
     },
   },
 
-  // Die fünf Stufen. range = Abstand der Kamera zur Adresse in Metern,
+  // Die fünf Stufen (Beschriftung auf Englisch). range = Abstand der Kamera zur Adresse in Metern,
   // pitch = Neigung in Grad (−90 senkrecht von oben, 0 waagerecht).
   levels: [
-    { id: 'stadt',     label: 'Stadt',     range: 16000, pitch: -60 },
-    { id: 'bezirk',    label: 'Bezirk',    range: 4200,  pitch: -52 },
-    { id: 'kiez',      label: 'Kiez',      range: 1100,  pitch: -42 },
-    { id: 'gebaeude',  label: 'Gebäude',   range: 230,   pitch: -28 },
-    { id: 'innenraum', label: 'Innenraum', interior: true },
+    { id: 'city',     label: 'City',     range: 16000, pitch: -60 },
+    { id: 'district', label: 'District', range: 4200,  pitch: -52 },
+    { id: 'street',   label: 'Street',   range: 230,   pitch: -28 },
+    { id: 'building', label: 'Building', range: 45,    pitch: -18 },
+    { id: 'room',     label: 'Room',     interior: true },
   ],
 
   // Wie lange eine Kamerafahrt zwischen zwei Stufen dauert (Sekunden)

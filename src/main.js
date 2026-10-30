@@ -14,7 +14,7 @@ function loadCesium() {
     const s = document.createElement('script');
     s.src = CESIUM + 'Cesium.js';
     s.onload = resolve;
-    s.onerror = () => reject(new Error('Cesium konnte nicht geladen werden.'));
+    s.onerror = () => reject(new Error('Cesium could not be loaded'));
     document.head.appendChild(s);
   });
 }
@@ -135,7 +135,7 @@ async function goTo(next) {
     if (next === INTERIOR) {
       // Erst ganz nah an die Fassade, dann überblenden
       if (prev !== LAST_MAP) await earth.flyTo(levels[LAST_MAP], config.flightDuration);
-      earth.flyTo({ range: 60, pitch: -12 }, 0.9);
+      earth.flyTo({ range: 22, pitch: -8 }, 0.9);
       await wait(500);
       await fade(true);
       earthEl.hidden = true;
@@ -147,7 +147,7 @@ async function goTo(next) {
       interior.hide();
       interiorEl.hidden = true;
       earthEl.hidden = false;
-      await earth.flyTo({ range: 60, pitch: -12 }, 0);
+      await earth.flyTo({ range: 22, pitch: -8 }, 0);
       await fade(false);
       await earth.flyTo(levels[next], config.flightDuration);
     } else {
@@ -235,7 +235,7 @@ const consoleError = console.error.bind(console);
 console.error = (...args) => {
   const msg = String(args[0] ?? '');
   const m = msg.match(/Google Maps JavaScript API error: (\w+)/);
-  if (m) status(`Google Karte nicht verfügbar (${m[1]})`);
+  if (m) status(`Google map unavailable (${m[1]})`);
   consoleError(...args);
 };
 
@@ -243,7 +243,7 @@ async function init() {
   buildLevelNav();
   renderPlace();
   bindInput();
-  status('Lade Karte');
+  status('Loading map');
 
   const pos = await locate(place);
   try {

@@ -9,7 +9,7 @@ export function createInterior(container) {
   let renderer, scene, camera, controls, frame = null, iframe = null;
   let loadedKey = null;
   const note = document.createElement('p');
-  note.className = 'interior-note';
+  note.className = 'interior-note outlined';
   container.appendChild(note);
 
   function setupThree() {
@@ -272,7 +272,7 @@ export function createInterior(container) {
         else await loadGltf(interiorCfg);
       } catch (err) {
         console.warn('Innenraum nicht gefunden, zeige Platzhalter.', err);
-        buildPlaceholder(`Platzhalter. Lege den Export aus Polycam unter ${interiorCfg.url} ab.`);
+        buildPlaceholder(`Placeholder. Put the Polycam export at ${interiorCfg.url}`);
       }
       loadedKey = key;
     } else if (home && !isPanorama) {

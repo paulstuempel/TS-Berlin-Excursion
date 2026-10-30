@@ -9,11 +9,11 @@ function loadGoogleMaps(key) {
   if (window.google?.maps?.importLibrary) return Promise.resolve();
   return new Promise((resolve, reject) => {
     window.__gmReady = resolve;
-    window.gm_authFailure = () => reject(new Error('Google API Key wurde abgelehnt. Domain-Beschränkung und aktivierte APIs prüfen.'));
+    window.gm_authFailure = () => reject(new Error('Google rejected the API key'));
     const s = document.createElement('script');
     s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&v=beta&loading=async&callback=__gmReady`;
     s.async = true;
-    s.onerror = () => reject(new Error('Google Maps konnte nicht geladen werden.'));
+    s.onerror = () => reject(new Error('Google Maps could not be loaded'));
     document.head.appendChild(s);
   });
 }
@@ -100,10 +100,24 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
     off = { e: 0, n: 0 };
     if (marker) marker.remove();
     marker = new Marker3DElement({
-      position: { lat, lng: lon, altitude: 25 },
+      position: { lat, lng: lon, altitude: 2 },
       altitudeMode: 'RELATIVE_TO_GROUND',
-      extruded: true,
     });
+    // Sichtbar bleiben, auch wenn ein Gebäude davor steht; immer gleich groß
+    for (const [k, v] of [['drawsWhenOccluded', true], ['sizePreserved', true]]) {
+      try { marker[k] = v; } catch {}
+    }
+    // Statt Googles Pin ein schlichter orangener Punkt
+    const dot = document.createElement('img');
+    dot.src = 'data:image/svg+xml,' + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">' +
+      '<circle cx="12" cy="12" r="9.5" fill="#ff4b1f" stroke="#fff" stroke-width="3"/></svg>'
+    );
+    dot.width = 24;
+    dot.height = 24;
+    const tpl = document.createElement('template');
+    tpl.content.append(dot);
+    marker.append(tpl);
     map.append(marker);
   }
 

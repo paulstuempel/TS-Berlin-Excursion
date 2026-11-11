@@ -53,8 +53,10 @@ export const config = {
       venue: 'Pickle Bar',
       // Wird beim ersten Laden über OpenStreetMap gesucht (Koordinaten stehen dann
       // in der Browser-Konsole und können hier fest eingetragen werden)
-      geocode: 'Stephanstraße 11, 10559 Berlin',
-      lat: 52.534502,        // von OpenStreetMap für Stephanstraße 11
+      geocode: false,
+      // OpenStreetMap setzt Nr. 11 mitten aufs Dach (52.534502). Der Punkt liegt
+      // stattdessen an der Fassade zur Straße, wo der Eingang ist
+      lat: 52.534466,
       lon: 13.3515841,
       focusHeight: 1.5,
       heading: 354,

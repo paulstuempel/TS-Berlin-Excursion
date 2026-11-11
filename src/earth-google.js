@@ -101,8 +101,13 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
     });
   }
 
-  function setTarget({ lat, lon, focusHeight = 0 }) {
-    target = { lat, lng: lon, altitude: focusHeight };
+  // Google rechnet die Höhe des Drehpunkts absolut, nicht über dem Boden.
+  // ground = Höhe der Straße in Googles Maß, sonst dreht sich die Kamera
+  // um einen Punkt unter der Erde und der Ortungspunkt wandert aus der Mitte.
+  let ground = 0;
+  function setTarget({ lat, lon, focusHeight = 0, groundAltitude = 0 }) {
+    ground = groundAltitude;
+    target = { lat, lng: lon, altitude: ground + focusHeight };
     off = { e: 0, n: 0 };
     if (marker) marker.remove();
     marker = new Marker3DElement({
@@ -154,7 +159,7 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
   async function flyTo({ range, pitch, heading, height }, duration = 1.8) {
     await recenter();
     const center = focus();
-    if (height != null) center.altitude = height;
+    if (height != null) center.altitude = ground + height;
     await fly({ center, range, tilt: 90 + pitch, heading: heading ?? map.heading ?? 0 }, duration);
   }
 

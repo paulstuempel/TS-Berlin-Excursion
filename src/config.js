@@ -27,13 +27,15 @@ export const config = {
       lon: 8.82343,
       // Höhe des Punkts und Drehpunkts über dem Boden in Metern (Erdgeschoss)
       focusHeight: 1.5,
+      // Höhe der Straße in Googles Höhenmaß (auf der Karte ausgemessen)
+      groundAltitude: 6.2,
       // Blickrichtung beim Start in Grad (0 = von Süden nach Norden schauen).
       // 215 schaut von der Kreuzung im Nordosten auf die Ecke mit dem Raum
       heading: 215,
       // Eigener Blick pro Stufe: Building knapp über den Dächern, steil von oben,
       // mit Blick von der Kreuzung auf die Ecke (heading = Blickrichtung in Grad)
       views: {
-        building: { range: 95, pitch: -48, heading: 215 },
+        building: { range: 85, pitch: -54, heading: 215 },
       },
       // Innenraum ab Stufe 5
       //   type: 'gltf'      → eigene Datei aus Polycam (GLTF/GLB)
@@ -59,11 +61,13 @@ export const config = {
       lat: 52.534466,
       lon: 13.3515841,
       focusHeight: 1.5,
+      // Höhe der Straße in Googles Höhenmaß (auf der Karte ausgemessen)
+      groundAltitude: 43.5,
       heading: 354,
       // Building knapp über den Dächern, steil von oben, Blick von der Straße auf das Haus
       // (in Bodennähe sind Googles Daten hier wegen der Bäume unbrauchbar)
       views: {
-        building: { range: 95, pitch: -48, heading: 354 },
+        building: { range: 70, pitch: -55, heading: 354 },
       },
       interior: {
         type: 'none',

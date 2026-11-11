@@ -137,7 +137,7 @@ function ensureEarth(pane) {
       places: { [pane.key]: place },
       startPlace: pane.key,
     });
-    pane.earth.setTarget({ ...pos, height: 0, focusHeight: place.focusHeight });
+    pane.earth.setTarget({ ...pos, focusHeight: place.focusHeight, groundAltitude: place.groundAltitude ?? 0 });
     pane.earth.jumpToOverview({ ...pos, heading: place.heading ?? 0 });
     document.body.dataset.mode = pane.earth.mode;
   })();

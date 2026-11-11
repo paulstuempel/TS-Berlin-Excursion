@@ -5,9 +5,11 @@
 // range = Abstand in Metern, tilt = Neigung (0 senkrecht von oben, 90 waagerecht),
 // heading = Himmelsrichtung in Grad.
 
+// Nur einmal laden, auch wenn beide Orte gleichzeitig starten
+let loading = null;
 function loadGoogleMaps(key) {
   if (window.google?.maps?.importLibrary) return Promise.resolve();
-  return new Promise((resolve, reject) => {
+  return (loading ??= new Promise((resolve, reject) => {
     window.__gmReady = resolve;
     window.gm_authFailure = () => reject(new Error('Google rejected the API key'));
     const s = document.createElement('script');
@@ -15,7 +17,7 @@ function loadGoogleMaps(key) {
     s.async = true;
     s.onerror = () => reject(new Error('Google Maps could not be loaded'));
     document.head.appendChild(s);
-  });
+  }).catch((err) => { loading = null; throw err; }));
 }
 
 const M_PER_DEG = 111320;

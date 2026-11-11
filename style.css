@@ -288,6 +288,7 @@ body[data-view="split"] #divider { display: block; }
   position: absolute;
   left: 0;
   top: 0;
+  width: max-content;
   pointer-events: none;
   /* Rand als Kontur um die beschnittene Form */
   filter: drop-shadow(1.5px 0 0 var(--black)) drop-shadow(-1.5px 0 0 var(--black))
@@ -315,7 +316,10 @@ body[data-view="split"] #divider { display: block; }
 
 .note.open { z-index: 10; }
 .note.open .note-card { opacity: 1; pointer-events: auto; transition: none; }
-.note.open .note-card-in { clip-path: inset(0 0 0 0 round calc(var(--dot) / 2)); }
+.note.open .note-card-in,
+.note.open.flip-x .note-card-in,
+.note.open.flip-y .note-card-in,
+.note.open.flip-x.flip-y .note-card-in { clip-path: inset(0 0 0 0 round calc(var(--dot) / 2)); }
 
 body[data-view="split"] .note-card-in { width: 230px; }
 .note-card p { margin: 0; }

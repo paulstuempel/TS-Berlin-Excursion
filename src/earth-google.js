@@ -146,9 +146,12 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
   }
 
   // Stufe anfliegen: erst zentrieren, dann zoomen; die gedrehte Blickrichtung bleibt
-  async function flyTo({ range, pitch }, duration = 1.8) {
+  // heading und height sind optional: feste Blickrichtung und Höhe des Blickpunkts über dem Boden
+  async function flyTo({ range, pitch, heading, height }, duration = 1.8) {
     await recenter();
-    await fly({ center: focus(), range, tilt: 90 + pitch, heading: map.heading ?? 0 }, duration);
+    const center = focus();
+    if (height != null) center.altitude = height;
+    await fly({ center, range, tilt: 90 + pitch, heading: heading ?? map.heading ?? 0 }, duration);
   }
 
   function jumpToOverview({ lat, lon, heading = 0 }) {

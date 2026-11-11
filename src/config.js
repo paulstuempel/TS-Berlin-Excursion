@@ -30,6 +30,11 @@ export const config = {
       // Blickrichtung beim Start in Grad (0 = von Süden nach Norden schauen).
       // 215 schaut von der Kreuzung im Nordosten auf die Ecke mit dem Raum
       heading: 215,
+      // Eigener Blick pro Stufe: Building steht direkt vor dem Eingang an der Ecke
+      // (heading = Blickrichtung in Grad, height = Höhe des Blickpunkts in Metern)
+      views: {
+        building: { range: 26, pitch: -10, heading: 215, height: 7 },
+      },
       // Innenraum ab Stufe 5
       //   type: 'gltf'      → eigene Datei aus Polycam (GLTF/GLB)
       //   type: 'panorama'  → 360°-Bild (equirektangulares JPG)
@@ -49,10 +54,15 @@ export const config = {
       // Wird beim ersten Laden über OpenStreetMap gesucht (Koordinaten stehen dann
       // in der Browser-Konsole und können hier fest eingetragen werden)
       geocode: 'Stephanstraße 11, 10559 Berlin',
-      lat: 52.5327,          // ungefähr, wird durch geocode ersetzt
-      lon: 13.3446,
+      lat: 52.534502,        // von OpenStreetMap für Stephanstraße 11
+      lon: 13.3515841,
       focusHeight: 1.5,
-      heading: 0,
+      heading: 354,
+      // Die Straße ist eng und voller Bäume: Building steht fast auf dem Gehweg
+      // und schaut knapp unter den Baumkronen auf den Eingang
+      views: {
+        building: { range: 11, pitch: -4, heading: 354, height: 3 },
+      },
       interior: {
         type: 'none',
         message: 'No scan yet. A scan of the Pickle Bar can be made during the visit on 21 November.',

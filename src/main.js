@@ -35,7 +35,15 @@ const panesEl = $('#panes');
 const levels = config.levels;
 const INTERIOR = levels.findIndex((l) => l.interior);
 const LAST_MAP = INTERIOR - 1;
-const NEAR_FACADE = { range: 22, pitch: -8 };
+
+// Stufe mit den Ausnahmen des Orts (z. B. eigener Blick aufs Gebäude)
+const view_ = (pane, i) => ({ ...levels[i], ...(pane.place.views?.[levels[i].id] ?? {}) });
+
+// Ganz nah an die Fassade vor dem Wechsel in den Raum, in Blickrichtung des Gebäudes
+const nearFacade = (pane) => {
+  const v = view_(pane, LAST_MAP);
+  return { ...v, range: Math.min(22, v.range * 0.6), pitch: Math.max(-8, v.pitch) };
+};
 
 let level = -1;          // -1 = noch nicht angekommen
 let busy = false;
@@ -151,7 +159,7 @@ async function move(pane, next, { instant = false } = {}) {
 
   if (instant) {
     if (next === INTERIOR) {
-      await earth.flyTo(NEAR_FACADE, 0);
+      await earth.flyTo(nearFacade(pane), 0);
       pane.earthEl.hidden = true;
       pane.interiorEl.hidden = false;
       await interior.show(pane.place.interior);
@@ -159,7 +167,7 @@ async function move(pane, next, { instant = false } = {}) {
       interior.hide();
       pane.interiorEl.hidden = true;
       pane.earthEl.hidden = false;
-      await earth.flyTo(levels[next], 0);
+      await earth.flyTo(view_(pane, next), 0);
     }
     return;
   }
@@ -168,8 +176,8 @@ async function move(pane, next, { instant = false } = {}) {
 
   if (next === INTERIOR) {
     // Erst ganz nah an die Fassade, dann überblenden
-    if (prev !== LAST_MAP) await earth.flyTo(levels[LAST_MAP], config.flightDuration);
-    earth.flyTo(NEAR_FACADE, 0.9);
+    if (prev !== LAST_MAP) await earth.flyTo(view_(pane, LAST_MAP), config.flightDuration);
+    earth.flyTo(nearFacade(pane), 0.9);
     await wait(500);
     await fade(pane, true);
     pane.earthEl.hidden = true;
@@ -181,14 +189,14 @@ async function move(pane, next, { instant = false } = {}) {
     interior.hide();
     pane.interiorEl.hidden = true;
     pane.earthEl.hidden = false;
-    await earth.flyTo(NEAR_FACADE, 0);
+    await earth.flyTo(nearFacade(pane), 0);
     await fade(pane, false);
-    await earth.flyTo(levels[next], config.flightDuration);
+    await earth.flyTo(view_(pane, next), config.flightDuration);
   } else {
     // Sprünge über mehrere Stufen dauern etwas länger, aber nicht linear
     const steps = Math.abs(next - prev);
     const d = config.flightDuration * (1 + 0.25 * (steps - 1));
-    await earth.flyTo(levels[next], prev < 0 ? 3.5 : d);
+    await earth.flyTo(view_(pane, next), prev < 0 ? 3.5 : d);
   }
 }
 

@@ -2,7 +2,7 @@
 // Sie stehen fest in der Ansicht (nicht im 3D-Raum), jede Stufe hat ihre eigenen.
 // Das Textfeld wächst aus dem Quadrat, möglichst um dessen Mitte herum.
 
-import { notes } from './notes.js';
+import { notes } from './notes.js?v=1794435765';
 
 const PAD_X = 16, PAD_TOP = 12, PAD_BOTTOM = 14;   // Innenabstand des Textfelds (wie in style.css)
 

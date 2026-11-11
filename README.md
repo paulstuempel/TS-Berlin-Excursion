@@ -62,3 +62,7 @@ assets/<ort>/     3D-Scans und Bilder
 - Zweiter Ort und Umschalten (Vollbild mit Buttons, Splitview, Slider)
 - Textebene je Stufe mit Ein/Aus-Schalter
 - Eventuell Texte von Besucher*innen
+
+## Updates
+
+Vor jedem Commit `tools/stamp.sh` ausführen. Das hängt eine neue Versionsnummer an alle eigenen Dateien, damit Browser nach einem Update nicht die alte Fassung aus dem Zwischenspeicher zeigen.

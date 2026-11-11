@@ -1,13 +1,12 @@
-// Textebene: kleine weiße Quadrate, die beim Klicken zu Textfeldern aufgehen.
+// Textebene: kleine weiße Punkte, die beim Darüberfahren zu Textfeldern aufgehen.
 // Sie stehen fest in der Ansicht (nicht im 3D-Raum), jede Stufe hat ihre eigenen.
 // Im Vergleich steht dasselbe Thema in beiden Hälften an derselben Stelle.
 
-import { config } from './config.js';
 import { notes } from './notes.js';
 
-// Bereich, in dem Quadrate liegen dürfen (Anteile der Fläche):
-// oben links Titel, rechts Stufenleiste, unten Hinweise und Google-Logo
-const AREA = { x0: 0.07, x1: 0.68, y0: 0.2, y1: 0.84 };
+// Bereich, in dem Punkte liegen dürfen (Anteile der Fläche):
+// oben links Titel, links Ortsmenü, rechts Stufenleiste, unten Hinweise und Google-Logo
+const AREA = { x0: 0.24, x1: 0.68, y0: 0.2, y1: 0.84 };
 const BLOCKED = [{ x0: 0, x1: 0.42, y0: 0, y1: 0.24 }];
 
 // Zufall mit festem Startwert, damit die Anordnung bei jedem Laden gleich ist
@@ -38,8 +37,6 @@ function layout(levelId, count) {
 }
 
 export function createNotes(container, placeKey, { onHover, onOpen, onClose }) {
-  const other = config.order.find((k) => k !== placeKey);
-  const otherName = config.places[other]?.name ?? '';
   let items = [];
   let openIndex = -1;
   let compare = false;
@@ -58,23 +55,15 @@ export function createNotes(container, placeKey, { onHover, onOpen, onClose }) {
       el.classList.toggle('flip-x', pts[i].x > 0.5);
       el.classList.toggle('flip-y', pts[i].y > 0.6);
       el.innerHTML = `
-        <button type="button" class="note-dot" aria-label="${n.topic}"></button>
-        <span class="note-label">${n.topic}</span>
-        <div class="note-card" role="dialog">
-          <p class="note-topic">${n.topic}</p>
-          <p class="note-text">${n[placeKey] ?? ''}</p>
-          <p class="note-other"><span class="note-other-name">${otherName}</span> ${n[other] ?? ''}</p>
+        <span class="note-dot" aria-hidden="true"></span>
+        <div class="note-card" role="note">
+          <div class="note-card-in"><p class="note-text">${n[placeKey] ?? ''}</p></div>
         </div>`;
-      const dot = el.querySelector('.note-dot');
-      dot.addEventListener('pointerenter', () => onHover?.(i, true));
-      dot.addEventListener('pointerleave', () => onHover?.(i, false));
-      dot.addEventListener('pointerdown', (e) => e.stopPropagation());
-      dot.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (openIndex === i) close();
-        else open(i);
-      });
-      el.querySelector('.note-card').addEventListener('pointerdown', (e) => e.stopPropagation());
+      // Öffnen beim Darüberfahren, schließen beim Verlassen (kurze Gnadenfrist)
+      let t;
+      el.addEventListener('pointerenter', () => { clearTimeout(t); if (openIndex !== i) open(i); });
+      el.addEventListener('pointerleave', () => { t = setTimeout(() => openIndex === i && close(), 120); });
+      el.addEventListener('pointerdown', (e) => e.stopPropagation());
       container.appendChild(el);
       return el;
     });

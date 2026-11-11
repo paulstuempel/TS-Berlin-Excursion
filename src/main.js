@@ -182,8 +182,10 @@ async function move(pane, next, { instant = false } = {}) {
     await fade(pane, true);
     pane.earthEl.hidden = true;
     pane.interiorEl.hidden = false;
-    await interior.show(pane.place.interior);
+    // Schleier gleich wegnehmen, damit die Ladeanzeige sichtbar ist (gleiche Farbe)
+    const loaded = interior.show(pane.place.interior);
     await fade(pane, false);
+    await loaded;
   } else if (prev === INTERIOR) {
     await fade(pane, true);
     interior.hide();

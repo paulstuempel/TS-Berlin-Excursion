@@ -17,6 +17,7 @@ export const config = {
     bremen: {
       name: 'Bremen',
       address: 'Am Dobben 27 to 32',
+      venue: 'Data Atlas',
       // Feste Position (über OpenStreetMap gefunden). Für einen neuen Ort kannst du
       // geocode: 'Straße Nr, PLZ Stadt' setzen, dann wird die Adresse gesucht
       // und die Koordinaten erscheinen in der Browser-Konsole.

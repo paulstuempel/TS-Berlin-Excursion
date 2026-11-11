@@ -264,6 +264,13 @@ export function createInterior(container) {
     frame = null;
   }
 
+  // Ladeanzeige, solange der Scan geladen wird
+  const loading = document.createElement('div');
+  loading.className = 'interior-loading';
+  loading.hidden = true;
+  loading.innerHTML = '<span class="spinner" aria-hidden="true"></span><span class="sr">Loading room</span>';
+  container.appendChild(loading);
+
   // Leerer Raum mit Hinweis, solange es noch keinen Scan gibt
   const empty = document.createElement('p');
   empty.className = 'interior-empty';
@@ -307,12 +314,15 @@ export function createInterior(container) {
     if (loadedKey !== key) {
       clearScene();
       isPanorama = false;
+      loading.hidden = false;
       try {
         if (interiorCfg.type === 'panorama') await loadPanorama(interiorCfg);
         else await loadGltf(interiorCfg);
       } catch (err) {
         console.warn('Innenraum nicht gefunden, zeige Platzhalter.', err);
         buildPlaceholder(`Placeholder. Put the Polycam export at ${interiorCfg.url}`);
+      } finally {
+        loading.hidden = true;
       }
       loadedKey = key;
     } else if (home && !isPanorama) {

@@ -40,7 +40,7 @@ Alles Wichtige steht in `src/config.js`:
 
 ### Innenraum
 
-Polycam Export als **GLTF** (bzw. GLB) unter `assets/bremen/interior.glb` ablegen. Exportiert Polycam eine `.gltf` mit Texturordner, alles in `assets/bremen/` legen und `url` in der config anpassen.
+Polycam Export als **GLTF** (bzw. GLB) unter `assets/bremen/interior.glb` ablegen. Der Scan für Bremen ist bereinigt (Schnitte in `assets/bremen/scan-cleanup.json`) und auf 2K Texturen verkleinert. Exportiert Polycam eine `.gltf` mit Texturordner, alles in `assets/bremen/` legen und `url` in der config anpassen.
 
 Für eine 360° Aufnahme: equirektangulares JPG ablegen und in der config `type: 'panorama'` setzen.
 

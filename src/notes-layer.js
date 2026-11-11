@@ -9,11 +9,11 @@ const PAD_X = 16, PAD_TOP = 12, PAD_BOTTOM = 14;   // Innenabstand des Textfelds
 // Bereich, in dem Quadrate liegen (Anteile der Fläche), mit festem Sicherheitsabstand
 // zu Titel, Menüs, Hinweisen und dem Ortungspunkt in der Mitte.
 // Gleiche Anteile in beiden Hälften, damit dasselbe Thema an derselben Stelle steht.
-const AREA = { x0: 0.24, x1: 0.7, y0: 0.2, y1: 0.84 };
+const AREA = { x0: 0.26, x1: 0.74, y0: 0.18, y1: 0.84 };
 const CENTER_GAP = 0.06;
 
-// Feste Ränder für offene Textfelder in px (links Ortsmenü, rechts Stufenleiste, oben Titel)
-const SAFE = { left: 140, right: 200, top: 120, bottom: 56 };
+// Feste Ränder für offene Textfelder in px (seitlich die gekippten Titel, oben die Menüs)
+const SAFE = { left: 180, right: 120, top: 110, bottom: 56 };
 
 // Zufall mit festem Startwert, damit die Anordnung bei jedem Laden gleich ist
 function rng(seed) {

@@ -134,12 +134,24 @@ body[data-view="split"] #divider { display: block; }
 /* ---------- Ort ---------- */
 
 /* Ort */
+/* Bremen am linken Rand, nach links gekippt (liest von unten nach oben),
+   Berlin am rechten Rand, nach rechts gekippt (liest von oben nach unten).
+   Beide in der Höhe zentriert, die Adresse steht jeweils innen neben dem Namen. */
 .place {
   position: absolute;
   z-index: 4;
-  top: 22px;
-  left: 28px;
+  top: 50%;
+  writing-mode: vertical-rl;
   pointer-events: none;
+  white-space: nowrap;
+}
+.pane[data-place="bremen"] .place {
+  left: 22px;
+  transform: translateY(-50%) rotate(180deg);
+}
+.pane[data-place="berlin"] .place {
+  right: 22px;
+  transform: translateY(-50%);
 }
 .place p { margin: 0; line-height: 1.05; }
 .place-city {
@@ -150,7 +162,7 @@ body[data-view="split"] #divider { display: block; }
 }
 .place-address {
   --stroke: 4px;
-  margin-top: 6px !important;
+  margin-right: 6px !important;
   font-size: 17px;
 }
 
@@ -158,9 +170,8 @@ body[data-view="split"] #divider { display: block; }
 
 #levels {
   position: fixed;
-  right: 28px;
-  top: 50%;
-  transform: translateY(-50%);
+  left: 28px;
+  top: 22px;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -215,8 +226,9 @@ body[data-view="split"] #divider { display: block; }
 }
 
 @media (max-width: 640px) {
-  .place { top: 16px; left: 16px; }
-  #levels { right: 12px; }
+  .pane[data-place="bremen"] .place { left: 12px; }
+  .pane[data-place="berlin"] .place { right: 12px; }
+  #levels { left: 12px; top: 12px; }
   #levels button .label { display: none; }
   #levels button { grid-template-columns: auto; }
   #hint { right: 16px; left: 16px; }
@@ -226,14 +238,15 @@ body[data-view="split"] #divider { display: block; }
 
 #switch {
   position: fixed;
-  left: 28px;
-  top: 50%;
-  transform: translateY(-50%);
+  right: 28px;
+  top: 22px;
   z-index: 15;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  align-items: flex-end;
+  gap: 10px;
 }
+#switch .row { display: flex; gap: 2px; }
 #switch button,
 #levels button { z-index: 15; }
 #levels { z-index: 15; }
@@ -246,7 +259,6 @@ body[data-view="split"] #divider { display: block; }
   font-family: var(--font);
   font-size: 15px;
 }
-#switch button.gap { margin-top: 10px; }
 #switch button.active { background: var(--black); color: var(--white); }
 #switch button:focus-visible { outline: 2px solid var(--black); outline-offset: 2px; }
 
@@ -310,7 +322,7 @@ body[data-view="split"] #divider { display: block; }
 .note.open .note-text { opacity: 1; transition: opacity .16s .12s; }
 
 @media (max-width: 640px) {
-  #switch { top: auto; bottom: 64px; left: 12px; transform: none; flex-direction: row; }
+  #switch { right: 12px; top: 12px; }
 }
 
 /* ---------- Ladeanzeige im Raum ---------- */

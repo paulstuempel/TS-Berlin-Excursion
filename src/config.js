@@ -72,7 +72,7 @@ export const config = {
       },
       interior: {
         type: 'none',
-        message: 'No scan yet. A scan of the Pickle Bar can be made during the visit on 21 November.',
+        message: 'No scan yet.',
       },
     },
   },

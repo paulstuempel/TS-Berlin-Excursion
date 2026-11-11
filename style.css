@@ -134,14 +134,12 @@ body[data-view="split"] #divider { display: block; }
 /* ---------- Ort ---------- */
 
 /* Ort */
-/* Name und Adresse unten links in jeder Hälfte, knapp über dem Google-Logo */
 .place {
   position: absolute;
   z-index: 4;
-  left: 22px;
-  bottom: 46px;
+  top: 22px;
+  left: 28px;
   pointer-events: none;
-  white-space: nowrap;
 }
 .place p { margin: 0; line-height: 1.05; }
 .place-city {
@@ -152,7 +150,7 @@ body[data-view="split"] #divider { display: block; }
 }
 .place-address {
   --stroke: 4px;
-  margin-top: 4px !important;
+  margin-top: 6px !important;
   font-size: 17px;
 }
 
@@ -160,8 +158,9 @@ body[data-view="split"] #divider { display: block; }
 
 #levels {
   position: fixed;
-  left: 28px;
-  top: 22px;
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -218,8 +217,8 @@ body[data-view="split"] #divider { display: block; }
 }
 
 @media (max-width: 640px) {
-  .place { left: 12px; }
-  #levels { left: 12px; top: 12px; }
+  .place { top: 16px; left: 16px; }
+  #levels { right: 12px; }
   #levels button .label { display: none; }
   #levels button { grid-template-columns: auto; }
   #hint { right: 16px; left: 16px; }
@@ -229,15 +228,14 @@ body[data-view="split"] #divider { display: block; }
 
 #switch {
   position: fixed;
-  right: 28px;
-  top: 22px;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 15;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
+  gap: 2px;
 }
-#switch .row { display: flex; gap: 2px; }
 #switch button,
 #levels button { z-index: 15; }
 #levels { z-index: 15; }
@@ -250,6 +248,7 @@ body[data-view="split"] #divider { display: block; }
   font-family: var(--font);
   font-size: 15px;
 }
+#switch button.gap { margin-top: 10px; }
 #switch button.active { background: var(--black); color: var(--white); }
 #switch button:focus-visible { outline: 2px solid var(--black); outline-offset: 2px; }
 
@@ -258,7 +257,7 @@ body[data-view="split"] #divider { display: block; }
 /* Quadrat (12 px) und Textfeld sind dasselbe Element mit derselben Kontur (1,5 px).
    Beim Öffnen wachsen Breite und Höhe, das Feld liegt möglichst mittig um das Quadrat. */
 .notes {
-  --dot: 12px;
+  --dot: 13px;
   position: absolute;
   inset: 0;
   z-index: 3;
@@ -313,7 +312,7 @@ body[data-view="split"] #divider { display: block; }
 .note.open .note-text { opacity: 1; transition: opacity .16s .12s; }
 
 @media (max-width: 640px) {
-  #switch { right: 12px; top: 12px; }
+  #switch { top: auto; bottom: 64px; left: 12px; transform: none; flex-direction: row; }
 }
 
 /* ---------- Ladeanzeige im Raum ---------- */

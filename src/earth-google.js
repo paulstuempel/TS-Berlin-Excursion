@@ -68,7 +68,9 @@ export async function createEarth(container, { googleApiKey, places, startPlace 
     const dy = e.clientY - drag.y;
     // Richtung wie im Raum: Ziehen nach rechts dreht nach rechts, nach unten schaut man steiler von oben (wie im Raum)
     map.heading = (drag.h + dx * 0.25 + 360) % 360;
-    map.tilt = Math.max(0, Math.min(85, drag.t - dy * 0.2));
+    map.tilt = Math.max(0, Math.min(80, drag.t - dy * 0.2));
+    // Drehpunkt festhalten, damit der Punkt in der Bildmitte bleibt
+    if (target) map.center = focus();
   });
   const end = () => (drag = null);
   pad.addEventListener('pointerup', end);

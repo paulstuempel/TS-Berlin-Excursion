@@ -39,10 +39,10 @@ const LAST_MAP = INTERIOR - 1;
 // Stufe mit den Ausnahmen des Orts (z. B. eigener Blick aufs Gebäude)
 const view_ = (pane, i) => ({ ...levels[i], ...(pane.place.views?.[levels[i].id] ?? {}) });
 
-// Ganz nah an die Fassade vor dem Wechsel in den Raum, in Blickrichtung des Gebäudes
+// Kurz vor dem Wechsel in den Raum noch näher heran, in Blickrichtung des Gebäudes
 const nearFacade = (pane) => {
   const v = view_(pane, LAST_MAP);
-  return { ...v, range: Math.min(22, v.range * 0.6), pitch: Math.max(-8, v.pitch) };
+  return { ...v, range: v.range * 0.35 };   // im gleichen Winkel auf den Punkt zu
 };
 
 let level = -1;          // -1 = noch nicht angekommen

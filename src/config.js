@@ -30,10 +30,10 @@ export const config = {
       // Blickrichtung beim Start in Grad (0 = von Süden nach Norden schauen).
       // 215 schaut von der Kreuzung im Nordosten auf die Ecke mit dem Raum
       heading: 215,
-      // Eigener Blick pro Stufe: Building steht direkt vor dem Eingang an der Ecke
-      // (heading = Blickrichtung in Grad, height = Höhe des Blickpunkts in Metern)
+      // Eigener Blick pro Stufe: Building knapp über den Dächern, steil von oben,
+      // mit Blick von der Kreuzung auf die Ecke (heading = Blickrichtung in Grad)
       views: {
-        building: { range: 26, pitch: -10, heading: 215, height: 7 },
+        building: { range: 95, pitch: -48, heading: 215 },
       },
       // Innenraum ab Stufe 5
       //   type: 'gltf'      → eigene Datei aus Polycam (GLTF/GLB)
@@ -60,10 +60,10 @@ export const config = {
       lon: 13.3515841,
       focusHeight: 1.5,
       heading: 354,
-      // Die Straße ist eng und voller Bäume: Building steht fast auf dem Gehweg
-      // und schaut knapp unter den Baumkronen auf den Eingang
+      // Building knapp über den Dächern, steil von oben, Blick von der Straße auf das Haus
+      // (in Bodennähe sind Googles Daten hier wegen der Bäume unbrauchbar)
       views: {
-        building: { range: 11, pitch: -4, heading: 354, height: 3 },
+        building: { range: 95, pitch: -48, heading: 354 },
       },
       interior: {
         type: 'none',

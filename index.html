@@ -20,16 +20,16 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main id="stage">
-    <div id="earth"></div>
-    <div id="interior" hidden></div>
-    <div id="veil"></div>
+  <main id="panes">
+    <div id="divider" aria-hidden="true"></div>
   </main>
 
-  <header id="place">
-    <p class="place-city outlined" data-bind="name"></p>
-    <p class="place-address outlined" data-bind="address"></p>
-  </header>
+  <nav id="switch" aria-label="Places">
+    <button type="button" data-view="bremen">Bremen</button>
+    <button type="button" data-view="berlin">Berlin</button>
+    <button type="button" data-view="split">Compare</button>
+    <button type="button" data-toggle="notes" class="gap">Notes</button>
+  </nav>
 
   <nav id="levels" aria-label="Zoom levels"></nav>
 

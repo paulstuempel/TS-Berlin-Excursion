@@ -107,6 +107,7 @@ export function createInterior(container) {
     const next = step + dir;
     if (next < 0 || next >= ZOOM_STEPS.length) return false;
     step = next;
+    if (!camera || !empty.hidden) return true;   // leerer Raum: Stufe zählt mit, sonst nichts
     if (isPanorama) {
       const f0 = camera.fov, f1 = 55 * ZOOM_STEPS[step] ** 0.6;
       await animate(0.8, (t) => { camera.fov = f0 + (f1 - f0) * t; camera.updateProjectionMatrix(); });
@@ -263,8 +264,27 @@ export function createInterior(container) {
     frame = null;
   }
 
+  // Leerer Raum mit Hinweis, solange es noch keinen Scan gibt
+  const empty = document.createElement('p');
+  empty.className = 'interior-empty';
+  empty.hidden = true;
+  container.appendChild(empty);
+
   async function show(interiorCfg) {
     const key = JSON.stringify(interiorCfg);
+    empty.hidden = true;
+
+    if (interiorCfg.type === 'none') {
+      if (renderer) renderer.domElement.hidden = true;
+      if (iframe) iframe.hidden = true;
+      empty.textContent = interiorCfg.message || '';
+      empty.hidden = false;
+      isPanorama = true; // keine Zoomstufen, keine Bewegung
+      home = null;
+      step = 0;
+      loadedKey = key;
+      return;
+    }
 
     if (interiorCfg.type === 'iframe') {
       if (renderer) renderer.domElement.hidden = true;

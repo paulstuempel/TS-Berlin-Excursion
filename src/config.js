@@ -7,8 +7,11 @@ export const config = {
   // Leer lassen = Ersatzmodus mit Cesium und flachem Satellitenbild (Esri).
   googleApiKey: 'AIzaSyBtcr8TikIKK3AxwVNp1QfPvavB-13bnPA',
 
-  // Welcher Ort beim Laden gezeigt wird (später kommt hier der zweite Ort dazu).
-  startPlace: 'bremen',
+  // Ansicht beim Laden: 'bremen', 'berlin' oder 'split' (beide nebeneinander)
+  startView: 'bremen',
+
+  // Reihenfolge der Orte (links, rechts)
+  order: ['bremen', 'berlin'],
 
   places: {
     bremen: {
@@ -36,6 +39,23 @@ export const config = {
         url: 'assets/bremen/interior.glb',
         unlit: true,          // Polycam-Texturen enthalten schon das Licht
         ceilingCut: 0,        // Decke ist im Scan schon entfernt; sonst Meter, die oben abgeschnitten werden
+      },
+    },
+
+    berlin: {
+      name: 'Berlin',
+      address: 'Stephanstraße 11',
+      venue: 'Pickle Bar',
+      // Wird beim ersten Laden über OpenStreetMap gesucht (Koordinaten stehen dann
+      // in der Browser-Konsole und können hier fest eingetragen werden)
+      geocode: 'Stephanstraße 11, 10559 Berlin',
+      lat: 52.5327,          // ungefähr, wird durch geocode ersetzt
+      lon: 13.3446,
+      focusHeight: 1.5,
+      heading: 0,
+      interior: {
+        type: 'none',
+        message: 'No scan yet. A scan of the Pickle Bar can be made during the visit on 21 November.',
       },
     },
   },

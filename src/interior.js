@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
 export function createInterior(container) {
   let renderer, scene, camera, controls, frame = null, iframe = null;
@@ -145,7 +146,7 @@ export function createInterior(container) {
   }
 
   async function loadGltf({ url, unlit, ceilingCut = 0.35 }) {
-    const gltf = await new GLTFLoader().loadAsync(url);
+    const gltf = await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(url);
     const model = gltf.scene;
 
     // Decke abschneiden, damit man von oben in den Raum schauen kann (Puppenhaus)

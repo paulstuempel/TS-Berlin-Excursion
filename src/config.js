@@ -35,7 +35,7 @@ export const config = {
         type: 'gltf',
         url: 'assets/bremen/interior.glb',
         unlit: true,          // Polycam-Texturen enthalten schon das Licht
-        ceilingCut: 0.35,     // so viele Meter werden oben abgeschnitten (0 = Decke bleibt)
+        ceilingCut: 0,        // Decke ist im Scan schon entfernt; sonst Meter, die oben abgeschnitten werden
       },
     },
   },

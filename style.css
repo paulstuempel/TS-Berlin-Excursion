@@ -252,9 +252,10 @@ body[data-view="split"] #divider { display: block; }
 
 /* ---------- Textebene ---------- */
 
-/* Punkte so groß wie der Ortungspunkt (22 px), Rand halb so dick (1,5 px) */
+/* Quadrat (12 px) und Textfeld sind dasselbe Element mit derselben Kontur (1,5 px).
+   Beim Öffnen wachsen Breite und Höhe, das Feld liegt möglichst mittig um das Quadrat. */
 .notes {
-  --dot: 22px;
+  --dot: 12px;
   position: absolute;
   inset: 0;
   z-index: 3;
@@ -262,72 +263,54 @@ body[data-view="split"] #divider { display: block; }
 }
 .note {
   position: absolute;
-  width: var(--dot);
-  height: var(--dot);
-  margin: calc(var(--dot) / -2) 0 0 calc(var(--dot) / -2);
-  pointer-events: auto;
+  width: 0;
+  height: 0;
   animation: note-in .35s ease both;
   animation-delay: var(--delay, 0ms);
-  transition: opacity .25s;
 }
-.notes.off .note { opacity: 0; pointer-events: none; }
-@keyframes note-in { from { opacity: 0; transform: scale(.4); } }
+.notes.off .note { opacity: 0; transition: opacity .25s; }
+.notes.off .note-box { pointer-events: none; }
+@keyframes note-in { from { opacity: 0; } }
 
-.note-dot {
+.note-box {
   position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: var(--white);
-  box-shadow: inset 0 0 0 1.5px var(--black);
-  cursor: default;
-}
-
-/* Der Kreis wächst zum Textfeld: gleiches Weiß, gleicher Rand, die Ecken
-   haben den Radius des Kreises. Aufgespannt von der Ecke, an der der Punkt sitzt. */
-.note-card {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: max-content;
-  pointer-events: none;
-  /* Rand als Kontur um die beschnittene Form */
-  filter: drop-shadow(1.5px 0 0 var(--black)) drop-shadow(-1.5px 0 0 var(--black))
-          drop-shadow(0 1.5px 0 var(--black)) drop-shadow(0 -1.5px 0 var(--black));
-  opacity: 0;
-  transition: opacity 0s .32s;
-}
-.note-card-in {
-  width: 290px;
-  max-height: 60vh;
-  overflow: auto;
-  padding: 13px 16px 15px;
+  left: calc(var(--dot) / -2);
+  top: calc(var(--dot) / -2);
+  width: var(--dot);
+  height: var(--dot);
+  box-sizing: border-box;
+  overflow: hidden;
   background: var(--white);
   color: var(--black);
-  border-radius: calc(var(--dot) / 2);
-  --cx: calc(100% - var(--dot));
-  clip-path: inset(0 var(--cx) var(--cx) 0 round calc(var(--dot) / 2));
-  transition: clip-path .32s cubic-bezier(.3, .7, .2, 1);
+  border: 1.5px solid var(--black);
+  pointer-events: auto;
+  cursor: default;
+  will-change: left, top, width, height;
+  transition: left .26s cubic-bezier(.3,.7,.2,1), top .26s cubic-bezier(.3,.7,.2,1),
+              width .26s cubic-bezier(.3,.7,.2,1), height .26s cubic-bezier(.3,.7,.2,1);
 }
-.note.flip-x .note-card { left: auto; right: 0; }
-.note.flip-y .note-card { top: auto; bottom: 0; }
-.note.flip-x .note-card-in { clip-path: inset(0 0 var(--cx) var(--cx) round calc(var(--dot) / 2)); }
-.note.flip-y .note-card-in { clip-path: inset(var(--cx) var(--cx) 0 0 round calc(var(--dot) / 2)); }
-.note.flip-x.flip-y .note-card-in { clip-path: inset(var(--cx) 0 0 var(--cx) round calc(var(--dot) / 2)); }
-
 .note.open { z-index: 10; }
-.note.open .note-card { opacity: 1; pointer-events: auto; transition: none; }
-.note.open .note-card-in,
-.note.open.flip-x .note-card-in,
-.note.open.flip-y .note-card-in,
-.note.open.flip-x.flip-y .note-card-in { clip-path: inset(0 0 0 0 round calc(var(--dot) / 2)); }
+.note.open .note-box {
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  height: var(--h);
+}
 
-body[data-view="split"] .note-card-in { width: 230px; }
-.note-card p { margin: 0; }
-.note-text { font-size: 17px; line-height: 1.28; }
+.note-text {
+  position: absolute;
+  left: 16px;
+  top: 12px;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.28;
+  opacity: 0;
+  transition: opacity .1s;
+}
+.note.open .note-text { opacity: 1; transition: opacity .16s .12s; }
 
 @media (max-width: 640px) {
   #switch { top: auto; bottom: 64px; left: 12px; transform: none; flex-direction: row; }
-  .note-card-in { width: 230px; }
 }
 
 /* ---------- Ladeanzeige im Raum ---------- */

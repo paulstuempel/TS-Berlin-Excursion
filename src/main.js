@@ -353,7 +353,6 @@ function bindInput() {
   let acc = 0;
   let idle;
   addEventListener('wheel', (e) => {
-    if (e.target.closest?.('.note-card')) return;   // in langen Notizen normal scrollen
     e.preventDefault();
     if (busy) { acc = 0; return; }
     acc += e.deltaY;

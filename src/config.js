@@ -62,7 +62,7 @@ export const config = {
       lon: 13.3515841,
       focusHeight: 1.5,
       // Höhe der Straße in Googles Höhenmaß (auf der Karte ausgemessen)
-      groundAltitude: 43.5,
+      groundAltitude: 37,
       heading: 354,
       // Building knapp über den Dächern, steil von oben, Blick von der Straße auf das Haus
       // (in Bodennähe sind Googles Daten hier wegen der Bäume unbrauchbar)

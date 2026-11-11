@@ -2,18 +2,18 @@
 // Sie stehen fest in der Ansicht (nicht im 3D-Raum), jede Stufe hat ihre eigenen.
 // Das Textfeld wächst aus dem Quadrat, möglichst um dessen Mitte herum.
 
-import { notes } from './notes.js?v=1794435765';
+import { notes } from './notes.js?v=1794436231';
 
 const PAD_X = 16, PAD_TOP = 12, PAD_BOTTOM = 14;   // Innenabstand des Textfelds (wie in style.css)
 
 // Bereich, in dem Quadrate liegen (Anteile der Fläche), mit festem Sicherheitsabstand
 // zu Titel, Menüs, Hinweisen und dem Ortungspunkt in der Mitte.
 // Gleiche Anteile in beiden Hälften, damit dasselbe Thema an derselben Stelle steht.
-const AREA = { x0: 0.26, x1: 0.74, y0: 0.18, y1: 0.84 };
+const AREA = { x0: 0.26, x1: 0.74, y0: 0.18, y1: 0.76 };
 const CENTER_GAP = 0.06;
 
-// Feste Ränder für offene Textfelder in px (seitlich die gekippten Titel, oben die Menüs)
-const SAFE = { left: 180, right: 120, top: 110, bottom: 56 };
+// Feste Ränder für offene Textfelder in px (oben die Menüs, unten Name und Adresse)
+const SAFE = { left: 180, right: 40, top: 110, bottom: 150 };
 
 // Zufall mit festem Startwert, damit die Anordnung bei jedem Laden gleich ist
 function rng(seed) {

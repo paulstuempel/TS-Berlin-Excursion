@@ -134,24 +134,14 @@ body[data-view="split"] #divider { display: block; }
 /* ---------- Ort ---------- */
 
 /* Ort */
-/* Bremen am linken Rand, nach links gekippt (liest von unten nach oben),
-   Berlin am rechten Rand, nach rechts gekippt (liest von oben nach unten).
-   Beide in der Höhe zentriert, die Adresse steht jeweils innen neben dem Namen. */
+/* Name und Adresse unten links in jeder Hälfte, knapp über dem Google-Logo */
 .place {
   position: absolute;
   z-index: 4;
-  top: 50%;
-  writing-mode: vertical-rl;
+  left: 22px;
+  bottom: 46px;
   pointer-events: none;
   white-space: nowrap;
-}
-.pane[data-place="bremen"] .place {
-  left: 22px;
-  transform: translateY(-50%) rotate(180deg);
-}
-.pane[data-place="berlin"] .place {
-  right: 22px;
-  transform: translateY(-50%);
 }
 .place p { margin: 0; line-height: 1.05; }
 .place-city {
@@ -162,7 +152,7 @@ body[data-view="split"] #divider { display: block; }
 }
 .place-address {
   --stroke: 4px;
-  margin-right: 6px !important;
+  margin-top: 4px !important;
   font-size: 17px;
 }
 
@@ -216,8 +206,10 @@ body[data-view="split"] #divider { display: block; }
 .interior-note { position: absolute; right: 12px; bottom: 56px; text-align: right; }
 .interior-empty {
   position: absolute;
-  left: 28px;
-  bottom: 24px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
   max-width: 340px;
   margin: 0;
   color: var(--white);
@@ -226,8 +218,7 @@ body[data-view="split"] #divider { display: block; }
 }
 
 @media (max-width: 640px) {
-  .pane[data-place="bremen"] .place { left: 12px; }
-  .pane[data-place="berlin"] .place { right: 12px; }
+  .place { left: 12px; }
   #levels { left: 12px; top: 12px; }
   #levels button .label { display: none; }
   #levels button { grid-template-columns: auto; }

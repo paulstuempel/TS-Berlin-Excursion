@@ -1,6 +1,6 @@
-import { config } from './config.js?v=1794435765';
-import { createInterior } from './interior.js?v=1794435765';
-import { createNotes } from './notes-layer.js?v=1794435765';
+import { config } from './config.js?v=1794436231';
+import { createInterior } from './interior.js?v=1794436231';
+import { createNotes } from './notes-layer.js?v=1794436231';
 
 // Kartenmodul wählen: mit Key Google 3D Maps, sonst Cesium mit flachem Satellitenbild
 const CESIUM = 'https://cdn.jsdelivr.net/npm/cesium@1.146.0/Build/Cesium/';
@@ -23,9 +23,9 @@ function loadCesium() {
 }
 
 async function loadEarthModule() {
-  if (config.googleApiKey) return import('./earth-google.js?v=1794435765');
+  if (config.googleApiKey) return import('./earth-google.js?v=1794436231');
   await loadCesium();
-  return import('./earth.js?v=1794435765');
+  return import('./earth.js?v=1794436231');
 }
 
 const $ = (s) => document.querySelector(s);

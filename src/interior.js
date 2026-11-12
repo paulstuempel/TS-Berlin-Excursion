@@ -5,7 +5,6 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
-import { addWorks, addPlanes } from './works.js?v=1794481891';
 
 export function createInterior(container) {
   let renderer, scene, camera, controls, frame = null, iframe = null;
@@ -28,7 +27,6 @@ export function createInterior(container) {
     scene.background = new THREE.Color('#1c1a17'); // sehr dunkles, warmes Grau
     camera = new THREE.PerspectiveCamera(55, 1, 0.05, 500);
     controls = new OrbitControls(camera, renderer.domElement);
-    (window.__rooms ??= []).push({ camera, controls });   // zum Testen und Feinjustieren
     controls.enableZoom = false;   // Mausrad gehört der Stufennavigation
     controls.enablePan = false;
     controls.enableDamping = true;
@@ -109,7 +107,6 @@ export function createInterior(container) {
     const next = step + dir;
     if (next < 0 || next >= ZOOM_STEPS.length) return false;
     step = next;
-    if (step > 0) works?.sharpen();
     if (!camera || !empty.hidden) return true;   // leerer Raum: Stufe zählt mit, sonst nichts
     if (isPanorama) {
       const f0 = camera.fov, f1 = 55 * ZOOM_STEPS[step] ** 0.6;
@@ -149,9 +146,7 @@ export function createInterior(container) {
     scene.add(sun);
   }
 
-  let works = null;
-
-  async function loadGltf({ url, unlit, ceilingCut = 0.35, works: workList, planes }) {
+  async function loadGltf({ url, unlit, ceilingCut = 0.35 }) {
     const gltf = await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(url);
     const model = gltf.scene;
 
@@ -175,8 +170,6 @@ export function createInterior(container) {
     addLights();
     scene.add(model);
     frameObject(model);
-    if (workList?.length) works = addWorks(scene, model, workList, url.replace(/[^/]*$/, ''));
-    if (planes?.length) addPlanes(scene, planes, url.replace(/[^/]*$/, ''));
   }
 
   async function loadPanorama({ url }) {

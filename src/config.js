@@ -47,27 +47,6 @@ export const config = {
         url: 'assets/bremen/interior.glb',
         unlit: true,          // Polycam-Texturen enthalten schon das Licht
         ceilingCut: 0,        // Decke ist im Scan schon entfernt; sonst Meter, die oben abgeschnitten werden
-        // Exponate in hoher Auflösung, als Abziehbild auf den Scan gelegt.
-        // tl, tr, bl = Ecken oben links, oben rechts, unten links in Metern (Koordinaten des Scans),
-        // so wie man vor dem Exponat steht. Dateien liegen in assets/bremen/works/
-        works: [
-          { name: 'Einleitung',  low: 'works/01-einleitung-low.jpg',  high: 'works/01-einleitung-high.jpg',
-            tl: [3.12, 0.45, -2.56], tr: [1.385, 0.45, -2.56], bl: [3.12, -0.775, -2.56], depth: 0.12 },
-          { name: 'Zeitstrahl',  low: 'works/02-zeitstrahl-low.jpg',  high: 'works/02-zeitstrahl-high.jpg',
-            tl: [-2.16, 0.34, -0.55], tr: [-2.16, 0.34, 4.43], bl: [-2.16, -1.575, -0.55], depth: 0.1 },
-          { name: 'Karte',       low: 'works/03-karte-low.jpg',       high: 'works/03-karte-high.jpg',
-            tl: [-2.035, 0.34, 4.25], tr: [-2.035, 0.34, 0.30], bl: [-2.035, -1.54, 4.25], depth: 0.07 },
-          { name: 'Lückentext',  low: 'works/04-lueckentext-low.jpg', high: 'works/04-lueckentext-high.jpg',
-            tl: [0.39, 0.36, 1.41], tr: [0.39, 0.36, 4.88], bl: [0.39, -1.61, 1.41], depth: 0.12 },
-        ],
-        // Straße hinter der Fensterfront (aus Fotos montiert, weichgezeichnet)
-        // und der Schriftzug auf dem Glas, von innen spiegelverkehrt
-        planes: [
-          { image: 'windows/strasse.jpg', tl: [-5.2, 0.62, -6.78], tr: [6.9, 0.62, -6.78], bl: [-5.2, -1.35, -6.78] },
-          { image: 'windows/eingang.jpg', tl: [7.3, 0.55, -5.4], tr: [7.3, 0.55, -3.4], bl: [7.3, -2.05, -5.4] },
-          { image: 'windows/sticker.png', transparent: true, opacity: 0.92,
-            tl: [2.85, 0.45, -6.64], tr: [4.45, 0.45, -6.64], bl: [2.85, 0.075, -6.64] },
-        ],
       },
     },
 

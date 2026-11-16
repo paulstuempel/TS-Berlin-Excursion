@@ -1,6 +1,6 @@
-import { config } from './config.js?v=1794482215';
-import { createInterior } from './interior.js?v=1794482215';
-import { createNotes } from './notes-layer.js?v=1794482215';
+import { config } from './config.js?v=1794868314';
+import { createInterior } from './interior.js?v=1794868314';
+import { createNotes } from './notes-layer.js?v=1794868314';
 
 // Kartenmodul wählen: mit Key Google 3D Maps, sonst Cesium mit flachem Satellitenbild
 const CESIUM = 'https://cdn.jsdelivr.net/npm/cesium@1.146.0/Build/Cesium/';
@@ -23,9 +23,9 @@ function loadCesium() {
 }
 
 async function loadEarthModule() {
-  if (config.googleApiKey) return import('./earth-google.js?v=1794482215');
+  if (config.googleApiKey) return import('./earth-google.js?v=1794868314');
   await loadCesium();
-  return import('./earth.js?v=1794482215');
+  return import('./earth.js?v=1794868314');
 }
 
 const $ = (s) => document.querySelector(s);
@@ -47,7 +47,7 @@ const nearFacade = (pane) => {
 
 let level = -1;          // -1 = noch nicht angekommen
 let busy = false;
-let view = null;         // 'bremen' | 'berlin' | 'split'
+let view = null;         // 'bremen' | 'berlin'
 let focusPane = null;    // Ort, auf den die Pfeiltasten wirken
 
 // ---------- Hilfen ----------
@@ -111,11 +111,7 @@ function createPane(key) {
     veil: el.querySelector('.veil'),
     earth: null,
     interior: createInterior(el.querySelector('.interior')),
-    notes: createNotes(el.querySelector('.notes'), key, {
-      onHover: (topicIndex, on) => otherPanes(key).forEach((p) => p.notes.highlight(topicIndex, on)),
-      onOpen: (topicIndex) => otherPanes(key).forEach((p) => view === 'split' ? p.notes.open(topicIndex, true) : p.notes.close()),
-      onClose: () => otherPanes(key).forEach((p) => view === 'split' && p.notes.close(true)),
-    }),
+    notes: createNotes(el.querySelector('.notes'), key),
     ready: null,
     at: -1,             // Stufe, auf der diese Fläche gerade steht
   };
@@ -123,7 +119,6 @@ function createPane(key) {
   return pane;
 }
 
-const otherPanes = (key) => Object.values(panes).filter((p) => p.key !== key && !p.el.hidden);
 const activePanes = () => config.order.map((k) => panes[k]).filter((p) => p && !p.el.hidden);
 
 // Karte erst laden, wenn die Fläche zum ersten Mal gezeigt wird
@@ -208,7 +203,7 @@ async function setView(next) {
   if (next === view) return;
   view = next;
   document.body.dataset.view = view;
-  const keys = view === 'split' ? config.order : [view];
+  const keys = [view];
 
   for (const key of config.order) {
     const pane = panes[key] ?? createPane(key);
@@ -219,7 +214,6 @@ async function setView(next) {
 
   for (const pane of activePanes()) {
     pane.notes.close(true);
-    pane.notes.setCompare(view === 'split');
     if (level >= 0) pane.notes.show(levels[level].id, notesOn);
   }
 
@@ -241,26 +235,6 @@ function renderSwitch() {
     b.classList.toggle('active', b.dataset.view === view);
   });
   $('#switch [data-toggle=notes]').classList.toggle('active', notesOn);
-}
-
-// ---------- Trennlinie im Vergleich ----------
-
-function bindDivider() {
-  const divider = $('#divider');
-  let dragging = false;
-  const set = (x) => {
-    const r = panesEl.getBoundingClientRect();
-    const f = Math.min(0.8, Math.max(0.2, (x - r.left) / r.width));
-    panesEl.style.setProperty('--split', f);
-  };
-  divider.addEventListener('pointerdown', (e) => {
-    dragging = true;
-    divider.setPointerCapture(e.pointerId);
-    e.stopPropagation();
-  });
-  divider.addEventListener('pointermove', (e) => dragging && set(e.clientX));
-  divider.addEventListener('pointerup', () => (dragging = false));
-  divider.addEventListener('dblclick', () => panesEl.style.setProperty('--split', 0.5));
 }
 
 // ---------- Textebene ----------
@@ -416,9 +390,9 @@ console.error = (...args) => {
 async function init() {
   buildLevelNav();
   bindInput();
-  bindDivider();
   const params = new URLSearchParams(location.search);
-  await setView(params.get('view') || config.startView);
+  const wanted = params.get('view');
+  await setView(config.order.includes(wanted) ? wanted : config.startView);
   status('');
   await goTo(0);
 }

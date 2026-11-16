@@ -2,13 +2,13 @@
 // Sie stehen fest in der Ansicht (nicht im 3D-Raum), jede Stufe hat ihre eigenen.
 // Das Textfeld wächst aus dem Quadrat, möglichst um dessen Mitte herum.
 
-import { notes } from './notes.js?v=1794482215';
+import { notes } from './notes.js?v=1794868314';
 
 const PAD_X = 16, PAD_TOP = 12, PAD_BOTTOM = 14;   // Innenabstand des Textfelds (wie in style.css)
 
 // Bereich, in dem Quadrate liegen (Anteile der Fläche), mit festem Sicherheitsabstand
 // zu Titel, Menüs, Hinweisen und dem Ortungspunkt in der Mitte.
-// Gleiche Anteile in beiden Hälften, damit dasselbe Thema an derselben Stelle steht.
+// Gleiche Lage in beiden Städten, damit vergleichbare Themen an derselben Stelle stehen.
 const AREA = { x0: 0.24, x1: 0.7, y0: 0.2, y1: 0.84 };
 const CENTER_GAP = 0.06;
 
@@ -42,7 +42,7 @@ function layout(levelId, count) {
   return (layouts[levelId] = pts);
 }
 
-export function createNotes(container, placeKey, { onOpen, onClose }) {
+export function createNotes(container, placeKey) {
   let items = [];
   let openIndex = -1;
   let currentLevel = null;
@@ -51,7 +51,9 @@ export function createNotes(container, placeKey, { onOpen, onClose }) {
     const list = notes[levelId] ?? [];
     const pts = layout(levelId, list.length);
     container.innerHTML = '';
+    // Ein Eintrag kann für beide Städte gelten (gleiche Stelle) oder nur für eine
     items = list.map((n, i) => {
+      if (!n[placeKey]) return null;
       const p = pts[i];
       const el = document.createElement('div');
       el.className = 'note';
@@ -102,24 +104,21 @@ export function createNotes(container, placeKey, { onOpen, onClose }) {
 
   function open(i, silent = false) {
     items.forEach((el, j) => {
+      if (!el) return;
       if (j === i) place(el);
       el.classList.toggle('open', j === i);
     });
     openIndex = i;
-    if (!silent) onOpen?.(i);
   }
 
   function close(silent = false) {
-    items.forEach((el) => el.classList.remove('open'));
+    items.forEach((el) => el?.classList.remove('open'));
     openIndex = -1;
-    if (!silent) onClose?.();
   }
 
-  function setCompare() {}
-  function highlight() {}
 
   // Klick daneben schließt das offene Textfeld
   container.parentElement.addEventListener('pointerdown', () => openIndex >= 0 && close());
 
-  return { show, open, close, highlight, setCompare };
+  return { show, open, close };
 }

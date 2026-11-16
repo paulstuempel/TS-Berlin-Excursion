@@ -59,7 +59,7 @@ assets/<ort>/     3D-Scans und Bilder
 
 ## Nächste Schritte
 
-- Zweiter Ort und Umschalten (Vollbild mit Buttons, Splitview, Slider)
+- Weitere Notizen aus Interviews (Einträge dürfen nur eine Stadt haben)
 - Textebene je Stufe mit Ein/Aus-Schalter
 - Eventuell Texte von Besucher*innen
 

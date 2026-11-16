@@ -1,4 +1,6 @@
-// Textebene: Kurznotizen je Stufe, jede Bremer Notiz hat ein Berliner Gegenstück.
+// Textebene: Kurznotizen je Stufe.
+// Ein Eintrag mit bremen und berlin steht in beiden Städten an derselben Stelle.
+// Ein Eintrag mit nur einer Stadt (z. B. aus einem Interview) erscheint nur dort.
 // Quelle: „Kurznotizen Ebenen Bremen und Berlin“ (11. November 2026).
 // check: true markiert Angaben, die im Dokument noch als „prüfen“ vermerkt sind.
 

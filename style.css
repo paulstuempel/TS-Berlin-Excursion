@@ -46,7 +46,6 @@ html, body {
 
 /* Flächen: ein Ort oder zwei nebeneinander */
 #panes {
-  --split: 0.5;
   position: fixed;
   inset: 0;
   display: flex;
@@ -58,7 +57,6 @@ html, body {
   overflow: hidden;
 }
 .pane[hidden] { display: none; }
-body[data-view="split"] .pane:first-of-type { flex: 0 0 calc(var(--split) * 100%); }
 
 .pane .earth, .pane .interior { position: absolute; inset: 0; }
 .pane .interior { background: #1c1a17; }
@@ -93,38 +91,7 @@ body[data-view="split"] .pane:first-of-type { flex: 0 0 calc(var(--split) * 100%
 }
 .veil.on { opacity: 1; }
 
-/* Trennlinie im Vergleich, ziehbar */
-#divider {
-  display: none;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(var(--split) * 100%);
-  width: 18px;
-  margin-left: -9px;
-  z-index: 20;
-  cursor: ew-resize;
-  touch-action: none;
-}
-#divider::before {
-  content: "";
-  position: absolute;
-  top: 0; bottom: 0; left: 8px;
-  width: 2px;
-  background: var(--white);
-  box-shadow: 0 0 0 1px var(--black);
-}
-#divider::after {
-  content: "";
-  position: absolute;
-  top: 50%; left: 5px;
-  width: 8px; height: 44px;
-  margin-top: -22px;
-  border-radius: 4px;
-  background: var(--white);
-  box-shadow: 0 0 0 1.5px var(--black);
-}
-body[data-view="split"] #divider { display: block; }
+
 
 /* Cesium (nur Ersatzmodus ohne Key) */
 .cesium-viewer-bottom { left: auto !important; right: 12px; bottom: 8px !important; font-size: 10px; }

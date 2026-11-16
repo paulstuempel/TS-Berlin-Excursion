@@ -7,10 +7,10 @@ export const config = {
   // Leer lassen = Ersatzmodus mit Cesium und flachem Satellitenbild (Esri).
   googleApiKey: 'AIzaSyBtcr8TikIKK3AxwVNp1QfPvavB-13bnPA',
 
-  // Ansicht beim Laden: 'bremen', 'berlin' oder 'split' (beide nebeneinander)
+  // Ort beim Laden: 'bremen' oder 'berlin'
   startView: 'bremen',
 
-  // Reihenfolge der Orte (links, rechts)
+  // Reihenfolge der Orte im Menü
   order: ['bremen', 'berlin'],
 
   places: {

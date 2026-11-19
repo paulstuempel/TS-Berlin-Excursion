@@ -1,6 +1,6 @@
-import { config } from './config.js?v=1794868314';
-import { createInterior } from './interior.js?v=1794868314';
-import { createNotes } from './notes-layer.js?v=1794868314';
+import { config } from './config.js?v=1795082235';
+import { createInterior } from './interior.js?v=1795082235';
+import { createNotes } from './notes-layer.js?v=1795082235';
 
 // Kartenmodul wählen: mit Key Google 3D Maps, sonst Cesium mit flachem Satellitenbild
 const CESIUM = 'https://cdn.jsdelivr.net/npm/cesium@1.146.0/Build/Cesium/';
@@ -23,9 +23,9 @@ function loadCesium() {
 }
 
 async function loadEarthModule() {
-  if (config.googleApiKey) return import('./earth-google.js?v=1794868314');
+  if (config.googleApiKey) return import('./earth-google.js?v=1795082235');
   await loadCesium();
-  return import('./earth.js?v=1794868314');
+  return import('./earth.js?v=1795082235');
 }
 
 const $ = (s) => document.querySelector(s);
@@ -98,8 +98,8 @@ function createPane(key) {
     <div class="veil"></div>
     <div class="notes"></div>
     <header class="place">
-      <p class="place-city outlined">${place.name}</p>
-      <p class="place-address outlined">${place.venue ? place.venue + ', ' : ''}${place.address}</p>
+      <p class="place-city outlined">${place.venue ?? place.name}</p>
+      <p class="place-address outlined">${place.address}, ${place.name}</p>
     </header>`;
   panesEl.appendChild(el);
   el.addEventListener('pointerdown', () => (focusPane = key));

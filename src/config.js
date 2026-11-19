@@ -53,7 +53,7 @@ export const config = {
     berlin: {
       name: 'Berlin',
       address: 'Stephanstraße 11',
-      venue: 'Pickle Bar',
+      venue: 'Picklebar',
       // Wird beim ersten Laden über OpenStreetMap gesucht (Koordinaten stehen dann
       // in der Browser-Konsole und können hier fest eingetragen werden)
       geocode: false,

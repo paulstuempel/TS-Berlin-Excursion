@@ -33,12 +33,12 @@ export const config = {
       // Blickrichtung beim Start in Grad (0 = von Süden nach Norden schauen).
       // 215 schaut von der Kreuzung im Nordosten auf die Ecke mit dem Raum
       heading: 215,
-      // Eigener Blick pro Stufe: Building knapp über den Dächern, steil von oben,
+      // Eigener Blick pro Ebene: Locality über den Dächern, steil von oben,
       // mit Blick von der Kreuzung auf die Ecke (heading = Blickrichtung in Grad)
       views: {
-        building: { range: 85, pitch: -54, heading: 215 },
+        locality: { range: 160, pitch: -48, heading: 215 },
       },
-      // Innenraum ab Stufe 5
+      // Innenraum auf der Ebene Space
       //   type: 'gltf'      → eigene Datei aus Polycam (GLTF/GLB)
       //   type: 'panorama'  → 360°-Bild (equirektangulares JPG)
       //   type: 'iframe'    → fremde Einbettung (z. B. Polycam Embed-Link)
@@ -53,7 +53,7 @@ export const config = {
     berlin: {
       name: 'Berlin',
       address: 'Stephanstraße 11',
-      venue: 'Picklebar',
+      venue: 'Pickle Bar',
       // Wird beim ersten Laden über OpenStreetMap gesucht (Koordinaten stehen dann
       // in der Browser-Konsole und können hier fest eingetragen werden)
       geocode: false,
@@ -65,10 +65,10 @@ export const config = {
       // Höhe der Straße in Googles Höhenmaß (auf der Karte ausgemessen)
       groundAltitude: 37,
       heading: 354,
-      // Building knapp über den Dächern, steil von oben, Blick von der Straße auf das Haus
+      // Locality über den Dächern, steil von oben, Blick von der Straße auf das Haus
       // (in Bodennähe sind Googles Daten hier wegen der Bäume unbrauchbar)
       views: {
-        building: { range: 70, pitch: -55, heading: 354 },
+        locality: { range: 140, pitch: -50, heading: 354 },
       },
       interior: {
         type: 'none',
@@ -77,14 +77,12 @@ export const config = {
     },
   },
 
-  // Die fünf Stufen (Beschriftung auf Englisch). range = Abstand der Kamera zur Adresse in Metern,
+  // Die drei Ebenen (Beschriftung auf Englisch). range = Abstand der Kamera zur Adresse in Metern,
   // pitch = Neigung in Grad (−90 senkrecht von oben, 0 waagerecht).
   levels: [
     { id: 'city',     label: 'City',     range: 16000, pitch: -60 },
-    { id: 'district', label: 'District', range: 1700,  pitch: -50 },
-    { id: 'street',   label: 'Street',   range: 230,   pitch: -28 },
-    { id: 'building', label: 'Building', range: 85,    pitch: -38 },
-    { id: 'room',     label: 'Room',     interior: true },
+    { id: 'locality', label: 'Locality', range: 160,   pitch: -45 },
+    { id: 'space',    label: 'Space',    interior: true },
   ],
 
   // Wie lange eine Kamerafahrt zwischen zwei Stufen dauert (Sekunden)

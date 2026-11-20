@@ -2,13 +2,11 @@
 
 Sketch für eine Webseite, die zwei Ausstellungsorte verbindet. Man scrollt in festen Stufen von der Stadt bis in den Ausstellungsraum.
 
-| Stufe | Ansicht |
+| Ebene | Ansicht |
 |---|---|
 | 01 City | Karte, ca. 16 km Abstand |
-| 02 District | ca. 1,7 km |
-| 03 Street | ca. 230 m |
-| 04 Building | ca. 85 m, steil von oben |
-| 05 Room | eigener 3D-Scan (Polycam) |
+| 02 Locality | Umgebung, über den Dächern mit Blick auf das Haus |
+| 03 Space | eigener 3D-Scan (Polycam) |
 
 Scrollen (oder + und -) wechselt die Stufe, Ziehen dreht die Ansicht, Pfeiltasten bewegen sie. Beim Stufenwechsel zentriert sich die Ansicht erst wieder auf die Adresse und zoomt dann. Im Innenraum gibt es drei weitere Zoomstufen.
 

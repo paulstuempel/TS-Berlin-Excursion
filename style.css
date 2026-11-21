@@ -303,3 +303,95 @@ html, body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* ---------- About und Sprache (oben rechts) ---------- */
+
+#meta {
+  position: fixed;
+  top: 22px;
+  right: 28px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  pointer-events: none;
+}
+#meta button {
+  all: unset;
+  pointer-events: auto;
+  cursor: pointer;
+  padding: 7px 14px 7px 12px;
+  background: var(--white);
+  color: var(--black);
+  font-family: var(--font);
+  font-size: 15px;
+  transition: color .25s, background .25s;
+}
+#meta button.active { background: var(--black); color: var(--white); }
+#meta button:focus-visible { outline: 2px solid var(--black); outline-offset: 2px; }
+#meta .lang { display: flex; gap: 2px; }
+#meta .lang button { padding: 7px 10px; font-size: 13px; font-weight: 600; letter-spacing: .02em; }
+/* Ist der Text offen, sitzt das Kreuz an der Stelle des About Knopfs */
+body.about-open #meta [data-about] { visibility: hidden; }
+body.about-open #meta .lang button { box-shadow: 0 0 0 1px var(--white); }
+
+#about {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--black);
+  color: var(--white);
+  animation: about-in .3s ease both;
+}
+#about[hidden] { display: none; }
+@keyframes about-in { from { opacity: 0; } }
+
+.about-inner {
+  padding: 120px 28px 96px clamp(28px, 12vw, 220px);
+  max-width: 1200px;
+}
+#about h1 {
+  margin: 0 0 56px;
+  max-width: 13em;
+  font-size: clamp(40px, 6.4vw, 92px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.about-body { max-width: 34em; font-size: clamp(18px, 1.45vw, 21px); line-height: 1.45; }
+.about-body p { margin: 0 0 1.05em; }
+.about-body i { font-style: italic; }
+
+.about-close {
+  all: unset;
+  position: fixed;
+  top: 22px;
+  right: 28px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  z-index: 1;
+}
+.about-close::before, .about-close::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+  background: var(--white);
+  transform: rotate(45deg);
+}
+.about-close::after { transform: rotate(-45deg); }
+.about-close:focus-visible { outline: 2px solid var(--white); outline-offset: 2px; }
+
+@media (max-width: 640px) {
+  #meta { top: 16px; right: 12px; }
+  .about-close { top: 16px; right: 12px; }
+  .about-inner { padding: 96px 20px 64px; }
+  #about h1 { margin-bottom: 36px; }
+}

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notizen auswählen</title>
+  <style>
+    @font-face {
+      font-family: "Ease";
+      src: url("../assets/fonts/EaseDoubleRounded-Regular.woff2") format("woff2"),
+           url("../assets/fonts/EaseDoubleRounded-Regular.woff") format("woff");
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: "Ease";
+      src: url("../assets/fonts/EaseDoubleRounded-Semibold.woff") format("woff");
+      font-weight: 600;
+    }
+    :root { --paper: #e9e6df; --ink: #000; --mute: #77736b; --line: #cfcac0; --accent: #ff4b1f; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Ease", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { padding: 40px 28px 8px; max-width: 1200px; }
+    h1 { margin: 0 0 12px; font-size: clamp(32px, 4vw, 52px); font-weight: 600; letter-spacing: -0.01em; line-height: 1; }
+    header p { margin: 0; max-width: 40em; font-size: 16px; line-height: 1.4; color: #333; }
+
+    main { padding: 0 28px 120px; max-width: 1200px; }
+    section { margin-top: 44px; }
+    .level-head {
+      position: sticky; top: 0; z-index: 2;
+      display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;
+      padding: 12px 0 10px;
+      background: var(--paper);
+      border-bottom: 1.5px solid var(--ink);
+    }
+    .level-head h2 { margin: 0; font-size: 26px; font-weight: 600; }
+    .level-head .count { font-size: 14px; color: var(--mute); font-variant-numeric: tabular-nums; }
+    .level-head .tools { margin-left: auto; display: flex; gap: 2px; }
+
+    button {
+      all: unset; cursor: pointer;
+      padding: 6px 12px; background: #fff; color: var(--ink);
+      font: inherit; font-size: 14px;
+    }
+    button:hover { background: var(--ink); color: #fff; }
+    button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+    .row {
+      display: grid;
+      grid-template-columns: 28px 44px 150px 1fr 1fr;
+      gap: 0 18px;
+      align-items: start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    .row:hover { background: rgba(255,255,255,.35); }
+    .row.off { opacity: .35; }
+    .row.off .txt { text-decoration: line-through; text-decoration-thickness: 1px; }
+    .row input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--ink); cursor: pointer; }
+    .id { font-size: 12px; font-weight: 600; color: var(--mute); padding-top: 3px; font-variant-numeric: tabular-nums; }
+    .topic { font-weight: 600; font-size: 15px; line-height: 1.3; }
+    .check { display: inline-block; margin-top: 4px; padding: 1px 6px; font-size: 11px; font-weight: 600; color: #fff; background: var(--accent); }
+    .txt { font-size: 15px; line-height: 1.35; }
+    .txt small { display: block; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--mute); margin-bottom: 2px; }
+    .txt.empty { color: var(--mute); font-style: italic; }
+
+    footer {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      padding: 14px 28px;
+      background: var(--ink); color: #fff;
+    }
+    footer .total { font-size: 15px; font-variant-numeric: tabular-nums; margin-right: auto; }
+    footer button { background: #fff; }
+    footer button.primary { background: var(--accent); color: #000; font-weight: 600; }
+    footer button:hover { background: #fff; color: #000; box-shadow: 0 0 0 2px #fff inset; }
+    .toast { font-size: 14px; opacity: 0; transition: opacity .2s; }
+    .toast.on { opacity: 1; }
+
+    @media (max-width: 760px) {
+      header, main { padding-left: 16px; padding-right: 16px; }
+      footer { padding: 12px 16px; }
+      .row { grid-template-columns: 26px 1fr; gap: 4px 10px; }
+      .row .id { display: none; }
+      .row .topic, .row .txt { grid-column: 2; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Notizen auswählen</h1>
+    <p>Alle Notizen der Webseite nach Ebenen. Hake ab, was bleiben soll, und entferne den Haken bei allem, was raus soll. Ein Klick auf die Zeile genügt. Die Auswahl wird in diesem Browser gespeichert. Zum Schluss auf „Auswahl kopieren“ klicken und das Ergebnis in den Chat einfügen. Die englische Fassung wird danach genauso angepasst.</p>
+  </header>
+  <main id="list"></main>
+  <footer>
+    <span class="total" id="total"></span>
+    <span class="toast" id="toast">Kopiert</span>
+    <button type="button" id="reset">Alle wieder an</button>
+    <button type="button" class="primary" id="copy">Auswahl kopieren</button>
+  </footer>
+
+  <script type="module">
+    const { notes } = await import('../src/notes.js?t=' + Date.now());
+
+    const LEVELS = [
+      { id: 'city', label: 'Stadt' },
+      { id: 'locality', label: 'Umgebung' },
+      { id: 'space', label: 'Raum' },
+    ];
+    const KEY = 'kontext-atlas-notizauswahl';
+
+    // Gespeichert werden nur die abgewählten ids
+    let off = new Set();
+    try { off = new Set(JSON.parse(localStorage.getItem(KEY)) || []); } catch {}
+    const save = () => { try { localStorage.setItem(KEY, JSON.stringify([...off])); } catch {} };
+
+    const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const cell = (city, text) => text
+      ? `<div class="txt"><small>${city}</small>${esc(text)}</div>`
+      : `<div class="txt empty"><small>${city}</small>kein Eintrag</div>`;
+
+    const list = document.getElementById('list');
+    list.innerHTML = LEVELS.map((L) => `
+      <section data-level="${L.id}">
+        <div class="level-head">
+          <h2>${L.label}</h2>
+          <span class="count"></span>
+          <span class="tools">
+            <button type="button" data-all="on">Alle an</button>
+            <button type="button" data-all="off">Alle aus</button>
+          </span>
+        </div>
+        ${(notes[L.id] || []).map((n) => `
+          <label class="row" data-id="${n.id}">
+            <input type="checkbox">
+            <span class="id">${n.id}</span>
+            <span class="topic">${esc(n.topic)}${n.check ? '<br><span class="check">prüfen</span>' : ''}</span>
+            ${cell('Bremen', n.bremen)}
+            ${cell('Berlin', n.berlin)}
+          </label>`).join('')}
+      </section>`).join('');
+
+    function render() {
+      let kept = 0, all = 0;
+      for (const sec of list.querySelectorAll('section')) {
+        const rows = [...sec.querySelectorAll('.row')];
+        let k = 0;
+        for (const r of rows) {
+          const on = !off.has(r.dataset.id);
+          r.querySelector('input').checked = on;
+          r.classList.toggle('off', !on);
+          if (on) k++;
+        }
+        sec.querySelector('.count').textContent = `${k} von ${rows.length} ausgewählt`;
+        kept += k; all += rows.length;
+      }
+      document.getElementById('total').textContent = `${kept} von ${all} Notizen bleiben`;
+    }
+
+    list.addEventListener('change', (e) => {
+      const row = e.target.closest('.row');
+      if (!row) return;
+      e.target.checked ? off.delete(row.dataset.id) : off.add(row.dataset.id);
+      save(); render();
+    });
+    list.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-all]');
+      if (!b) return;
+      const ids = [...b.closest('section').querySelectorAll('.row')].map((r) => r.dataset.id);
+      ids.forEach((id) => (b.dataset.all === 'on' ? off.delete(id) : off.add(id)));
+      save(); render();
+    });
+    document.getElementById('reset').addEventListener('click', () => {
+      off.clear(); save(); render();
+    });
+
+    // Text für den Chat
+    function summary() {
+      const lines = ['Notizauswahl Kontext Atlas'];
+      for (const L of LEVELS) {
+        const ids = (notes[L.id] || []).map((n) => n.id);
+        const keep = ids.filter((id) => !off.has(id));
+        const drop = ids.filter((id) => off.has(id));
+        lines.push('', `${L.label} behalten (${keep.length}) ${keep.join(' ') || 'keine'}`);
+        lines.push(`${L.label} entfernen (${drop.length}) ${drop.join(' ') || 'keine'}`);
+      }
+      return lines.join('\n');
+    }
+
+    document.getElementById('copy').addEventListener('click', async () => {
+      const text = summary();
+      try { await navigator.clipboard.writeText(text); }
+      catch {
+        const ta = Object.assign(document.createElement('textarea'), { value: text });
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+      }
+      const t = document.getElementById('toast');
+      t.classList.add('on'); setTimeout(() => t.classList.remove('on'), 1600);
+    });
+
+    render();
+  </script>
+</body>
+</html>

@@ -1,6 +1,7 @@
-import { config } from './config.js?v=1795217223';
-import { createInterior } from './interior.js?v=1795217223';
-import { createNotes } from './notes-layer.js?v=1795217223';
+import { config } from './config.js?v=1795224495';
+import { createInterior } from './interior.js?v=1795224495';
+import { createNotes } from './notes-layer.js?v=1795224495';
+import { t, about, getLang, setLang, onLang } from './i18n.js?v=1';
 
 // Kartenmodul wählen: mit Key Google 3D Maps, sonst Cesium mit flachem Satellitenbild
 const CESIUM = 'https://cdn.jsdelivr.net/npm/cesium@1.146.0/Build/Cesium/';
@@ -23,9 +24,9 @@ function loadCesium() {
 }
 
 async function loadEarthModule() {
-  if (config.googleApiKey) return import('./earth-google.js?v=1795217223');
+  if (config.googleApiKey) return import('./earth-google.js?v=1795224495');
   await loadCesium();
-  return import('./earth.js?v=1795217223');
+  return import('./earth.js?v=1795224495');
 }
 
 const $ = (s) => document.querySelector(s);
@@ -99,7 +100,7 @@ function createPane(key) {
     <div class="notes"></div>
     <header class="place">
       <p class="place-city outlined">${place.venue ?? place.name}</p>
-      <p class="place-address outlined">${place.address}, ${place.name}</p>
+      <p class="place-address outlined">${t(place.address)}, ${place.name}</p>
     </header>`;
   panesEl.appendChild(el);
   el.addEventListener('pointerdown', () => (focusPane = key));
@@ -218,7 +219,7 @@ async function setView(next) {
   }
 
   // Neu sichtbare Orte direkt auf die aktuelle Stufe bringen
-  status(level < 0 ? 'Loading map' : '');
+  status(level < 0 ? t('loadingMap') : '');
   try {
     await Promise.all(activePanes().map(async (pane) => {
       await ensureEarth(pane);
@@ -255,7 +256,7 @@ function buildLevelNav() {
     .map((l, i) => `
       <button type="button" data-level="${i}">
         <span class="num">${String(i + 1).padStart(2, '0')}</span>
-        <span class="label">${l.label}</span>
+        <span class="label">${t(l.id)}</span>
         ${l.interior ? '<span class="sub" aria-hidden="true"></span>' : ''}
       </button>`)
     .join('');
@@ -327,6 +328,7 @@ function bindInput() {
   let acc = 0;
   let idle;
   addEventListener('wheel', (e) => {
+    if (aboutOpen) return;   // im About-Text normal scrollen
     e.preventDefault();
     if (busy) { acc = 0; return; }
     acc += e.deltaY;
@@ -343,6 +345,7 @@ function bindInput() {
   const ARROWS = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
 
   addEventListener('keydown', (e) => {
+    if (aboutOpen) { if (e.key === 'Escape') setAbout(false); return; }
     if (ARROWS.includes(e.key)) { held.add(e.key); e.preventDefault(); }
     if (['+', 'PageDown'].includes(e.key)) step(1);
     if (['-', 'PageUp'].includes(e.key)) step(-1);
@@ -376,6 +379,58 @@ function bindInput() {
   });
 }
 
+// ---------- About und Sprache ----------
+
+let aboutOpen = false;
+const aboutEl = $('#about');
+
+function renderAbout() {
+  const a = about[getLang()];
+  aboutEl.querySelector('#about-title').textContent = a.title;
+  aboutEl.querySelector('.about-body').innerHTML = a.body.map((p) => `<p>${p}</p>`).join('');
+  aboutEl.querySelector('.about-close').setAttribute('aria-label', t('close'));
+}
+
+function setAbout(on) {
+  aboutOpen = on;
+  aboutEl.hidden = !on;
+  document.body.classList.toggle('about-open', on);
+  $('#meta [data-about]').classList.toggle('active', on);
+  if (on) {
+    aboutEl.scrollTop = 0;
+    aboutEl.querySelector('.about-close').focus();
+  }
+}
+
+// Alle festen Texte der Oberfläche in der aktuellen Sprache
+function renderLang() {
+  document.documentElement.lang = getLang();
+  document.querySelectorAll('[data-i18n]').forEach((el) => (el.textContent = t(el.dataset.i18n)));
+  document.querySelectorAll('[data-i18n-html]').forEach((el) => (el.innerHTML = t(el.dataset.i18nHtml)));
+  document.querySelectorAll('#meta [data-lang]').forEach((b) => b.classList.toggle('active', b.dataset.lang === getLang()));
+  document.querySelectorAll('#levels button').forEach((b) => {
+    b.querySelector('.label').textContent = t(levels[+b.dataset.level].id);
+  });
+  for (const pane of Object.values(panes)) {
+    pane.el.querySelector('.place-address').textContent = `${t(pane.place.address)}, ${pane.place.name}`;
+    const empty = pane.el.querySelector('.interior-empty');
+    if (empty && pane.place.interior.type === 'none') empty.textContent = t(pane.place.interior.message);
+    pane.notes.refresh();
+  }
+  renderAbout();
+}
+
+function bindMeta() {
+  $('#meta').addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    if (b.dataset.about !== undefined) setAbout(!aboutOpen);
+    if (b.dataset.lang) setLang(b.dataset.lang);
+  });
+  aboutEl.querySelector('.about-close').addEventListener('click', () => setAbout(false));
+  onLang(renderLang);
+}
+
 // ---------- Start ----------
 
 // Google meldet Probleme mit dem Key nur in der Konsole, hier werden sie sichtbar
@@ -390,6 +445,8 @@ console.error = (...args) => {
 async function init() {
   buildLevelNav();
   bindInput();
+  bindMeta();
+  renderLang();
   const params = new URLSearchParams(location.search);
   const wanted = params.get('view');
   await setView(config.order.includes(wanted) ? wanted : config.startView);

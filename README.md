@@ -8,6 +8,8 @@ Sketch für eine Webseite, die zwei Ausstellungsorte verbindet. Man scrollt in f
 | 02 Locality | Umgebung, über den Dächern mit Blick auf das Haus |
 | 03 Space | eigener 3D-Scan (Polycam) |
 
+Oben rechts öffnet „About“ die Einführung, darunter schaltet DE und EN die Sprache um. Alle Texte stehen in `src/i18n.js`, die englischen Notizen in `src/notes-en.js` (verbunden über die id in `src/notes.js`).
+
 Scrollen (oder + und -) wechselt die Stufe, Ziehen dreht die Ansicht, Pfeiltasten bewegen sie. Beim Stufenwechsel zentriert sich die Ansicht erst wieder auf die Adresse und zoomt dann. Im Innenraum gibt es drei weitere Zoomstufen.
 
 ## Lokal ansehen
@@ -54,6 +56,10 @@ src/earth.js      Ersatz-Kartenansicht ohne Key (Cesium)
 src/interior.js   Innenraum (three.js)
 assets/<ort>/     3D-Scans und Bilder
 ```
+
+## Notizen auswählen
+
+`tools/notizen.html` (online unter `/tools/notizen.html`) listet alle Notizen nach Ebenen. Dort an und abwählen, dann „Auswahl kopieren“ und das Ergebnis weitergeben.
 
 ## Nächste Schritte
 

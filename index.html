@@ -17,7 +17,7 @@
   }
   </script>
 
-  <link rel="stylesheet" href="style.css?v=1795217223">
+  <link rel="stylesheet" href="style.css?v=1795224495">
 </head>
 <body>
   <main id="panes">
@@ -26,14 +26,30 @@
   <nav id="switch" aria-label="Places">
     <button type="button" data-view="bremen">Data Atlas</button>
     <button type="button" data-view="berlin">Pickle Bar</button>
-    <button type="button" data-toggle="notes" class="gap">Notes</button>
+    <button type="button" data-toggle="notes" class="gap" data-i18n="notes">Notes</button>
   </nav>
 
   <nav id="levels" aria-label="Zoom levels"></nav>
 
-  <p id="hint" class="outlined">Scroll to zoom, drag to look around,<br>arrow keys to move</p>
+  <nav id="meta">
+    <button type="button" data-about>About</button>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="de">DE</button>
+      <button type="button" data-lang="en">EN</button>
+    </div>
+  </nav>
+
+  <section id="about" hidden aria-modal="true" role="dialog" aria-labelledby="about-title">
+    <button type="button" class="about-close" aria-label="Close"></button>
+    <article class="about-inner">
+      <h1 id="about-title"></h1>
+      <div class="about-body"></div>
+    </article>
+  </section>
+
+  <p id="hint" class="outlined" data-i18n-html="hint"></p>
   <p id="status" class="outlined" hidden></p>
 
-  <script type="module" src="src/main.js?v=1795217223"></script>
+  <script type="module" src="src/main.js?v=1795224495"></script>
 </body>
 </html>

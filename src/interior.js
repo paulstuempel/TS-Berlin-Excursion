@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { t } from './i18n.js?v=1';
 
 export function createInterior(container) {
   let renderer, scene, camera, controls, frame = null, iframe = null;
@@ -268,7 +269,7 @@ export function createInterior(container) {
   const loading = document.createElement('div');
   loading.className = 'interior-loading';
   loading.hidden = true;
-  loading.innerHTML = '<span class="spinner" aria-hidden="true"></span><span class="sr">Loading room</span>';
+  loading.innerHTML = '<span class="spinner" aria-hidden="true"></span><span class="sr">' + t('loadingRoom') + '</span>';
   container.appendChild(loading);
 
   // Leerer Raum mit Hinweis, solange es noch keinen Scan gibt
@@ -284,7 +285,7 @@ export function createInterior(container) {
     if (interiorCfg.type === 'none') {
       if (renderer) renderer.domElement.hidden = true;
       if (iframe) iframe.hidden = true;
-      empty.textContent = interiorCfg.message || '';
+      empty.textContent = t(interiorCfg.message);
       empty.hidden = false;
       isPanorama = true; // keine Zoomstufen, keine Bewegung
       home = null;

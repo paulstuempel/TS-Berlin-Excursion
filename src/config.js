@@ -16,7 +16,7 @@ export const config = {
   places: {
     bremen: {
       name: 'Bremen',
-      address: 'Am Dobben 27 to 32',
+      address: { de: 'Am Dobben 27 bis 32', en: 'Am Dobben 27 to 32' },
       venue: 'Data Atlas',
       // Feste Position (über OpenStreetMap gefunden). Für einen neuen Ort kannst du
       // geocode: 'Straße Nr, PLZ Stadt' setzen, dann wird die Adresse gesucht
@@ -72,12 +72,12 @@ export const config = {
       },
       interior: {
         type: 'none',
-        message: 'No scan yet.',
+        message: { de: 'Noch kein Scan.', en: 'No scan yet.' },
       },
     },
   },
 
-  // Die drei Ebenen (Beschriftung auf Englisch). range = Abstand der Kamera zur Adresse in Metern,
+  // Die drei Ebenen (Beschriftung steht in i18n.js unter der id). range = Abstand der Kamera zur Adresse in Metern,
   // pitch = Neigung in Grad (−90 senkrecht von oben, 0 waagerecht).
   levels: [
     { id: 'city',     label: 'City',     range: 16000, pitch: -60 },

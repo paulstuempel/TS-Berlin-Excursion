@@ -2,7 +2,12 @@
 // Sie stehen fest in der Ansicht (nicht im 3D-Raum), jede Stufe hat ihre eigenen.
 // Das Textfeld wächst aus dem Quadrat, möglichst um dessen Mitte herum.
 
-import { notes } from './notes.js?v=1795217223';
+import { notes } from './notes.js?v=1795224495';
+import { notesEn } from './notes-en.js?v=1795224495';
+import { getLang } from './i18n.js?v=1';
+
+// Text eines Eintrags in der aktuellen Sprache, sonst Deutsch
+const textOf = (n, place) => (getLang() === 'en' ? notesEn[n.id]?.[place] : null) ?? n[place];
 
 const PAD_X = 16, PAD_TOP = 12, PAD_BOTTOM = 14;   // Innenabstand des Textfelds (wie in style.css)
 
@@ -61,7 +66,7 @@ export function createNotes(container, placeKey) {
       el.style.top = (p.y * 100) + '%';
       el.style.setProperty('--delay', (i * 25) + 'ms');
       el.innerHTML = `
-        <div class="note-box"><p class="note-text">${n[placeKey] ?? ''}</p></div>`;
+        <div class="note-box"><p class="note-text">${textOf(n, placeKey) ?? ''}</p></div>`;
       // Öffnen beim Darüberfahren, schließen beim Verlassen (kurze Gnadenfrist)
       let t;
       el.addEventListener('pointerenter', () => { clearTimeout(t); if (openIndex !== i) open(i); });
@@ -120,5 +125,10 @@ export function createNotes(container, placeKey) {
   // Klick daneben schließt das offene Textfeld
   container.parentElement.addEventListener('pointerdown', () => openIndex >= 0 && close());
 
-  return { show, open, close };
+  // Nach einem Sprachwechsel neu aufbauen
+  function refresh() {
+    if (currentLevel) render(currentLevel);
+  }
+
+  return { show, open, close, refresh };
 }

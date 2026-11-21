@@ -2,9 +2,9 @@
 // Sie stehen fest in der Ansicht (nicht im 3D-Raum), jede Stufe hat ihre eigenen.
 // Das Textfeld wächst aus dem Quadrat, möglichst um dessen Mitte herum.
 
-import { notes } from './notes.js?v=1795226712';
-import { notesEn } from './notes-en.js?v=1795226712';
-import { getLang } from './i18n.js?v=1795226712';
+import { notes } from './notes.js?v=1795248843';
+import { notesEn } from './notes-en.js?v=1795248843';
+import { getLang } from './i18n.js?v=1795248843';
 
 // Text eines Eintrags in der aktuellen Sprache, sonst Deutsch
 const textOf = (n, place) => (getLang() === 'en' ? notesEn[n.id]?.[place] : null) ?? n[place];
@@ -14,11 +14,16 @@ const PAD_X = 16, PAD_TOP = 12, PAD_BOTTOM = 14;   // Innenabstand des Textfelds
 // Bereich, in dem Quadrate liegen (Anteile der Fläche), mit festem Sicherheitsabstand
 // zu Titel, Menüs, Hinweisen und dem Ortungspunkt in der Mitte.
 // Gleiche Lage in beiden Städten, damit vergleichbare Themen an derselben Stelle stehen.
-const AREA = { x0: 0.24, x1: 0.7, y0: 0.2, y1: 0.84 };
+const AREA_WIDE = { x0: 0.24, x1: 0.7, y0: 0.2, y1: 0.84 };
+// Mobil liegen Orte und Ebenen unten, die Notizen darüber
+const AREA_NARROW = { x0: 0.1, x1: 0.9, y0: 0.18, y1: 0.68 };
 const CENTER_GAP = 0.06;
 
 // Feste Ränder für offene Textfelder in px (links Ortsmenü, rechts Stufenleiste, oben Titel)
-const SAFE = { left: 140, right: 200, top: 120, bottom: 56 };
+const SAFE_WIDE = { left: 140, right: 200, top: 120, bottom: 56 };
+const SAFE_NARROW = { left: 16, right: 16, top: 110, bottom: 200 };
+
+const narrow = () => matchMedia('(max-width: 640px)').matches;
 
 // Zufall mit festem Startwert, damit die Anordnung bei jedem Laden gleich ist
 function rng(seed) {
@@ -29,7 +34,9 @@ function rng(seed) {
 
 const layouts = {};
 function layout(levelId, count) {
-  if (layouts[levelId]) return layouts[levelId];
+  const AREA = narrow() ? AREA_NARROW : AREA_WIDE;
+  const key = levelId + (narrow() ? ':n' : ':w');
+  if (layouts[key]) return layouts[key];
   const rand = rng(levelId);
   const pts = [];
   let minD = 0.12;
@@ -44,7 +51,7 @@ function layout(levelId, count) {
     if (!center && !near) pts.push(p);
     if (++tries > 400) { minD *= 0.9; tries = 0; }
   }
-  return (layouts[levelId] = pts);
+  return (layouts[key] = pts);
 }
 
 export function createNotes(container, placeKey) {
@@ -68,10 +75,21 @@ export function createNotes(container, placeKey) {
       el.innerHTML = `
         <div class="note-box"><p class="note-text">${textOf(n, placeKey) ?? ''}</p></div>`;
       // Öffnen beim Darüberfahren, schließen beim Verlassen (kurze Gnadenfrist)
+      // Mit Maus öffnet Darüberfahren, auf Touchgeräten ein Tippen (nochmal tippen schließt)
       let t;
-      el.addEventListener('pointerenter', () => { clearTimeout(t); if (openIndex !== i) open(i); });
-      el.addEventListener('pointerleave', () => { t = setTimeout(() => openIndex === i && close(), 120); });
-      el.addEventListener('pointerdown', (e) => e.stopPropagation());
+      el.addEventListener('pointerenter', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        clearTimeout(t); if (openIndex !== i) open(i);
+      });
+      el.addEventListener('pointerleave', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        t = setTimeout(() => openIndex === i && close(), 120);
+      });
+      el.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        if (e.pointerType === 'mouse') return;
+        openIndex === i ? close() : open(i);
+      });
       container.appendChild(el);
       return el;
     });
@@ -84,6 +102,7 @@ export function createNotes(container, placeKey) {
     const box = el.querySelector('.note-box');
     const text = box.firstElementChild;
     const W = container.clientWidth, H = container.clientHeight;
+    const SAFE = narrow() ? SAFE_NARROW : SAFE_WIDE;
     const width = Math.min(W < 700 ? 240 : 290, W - 32);
     text.style.width = (width - PAD_X * 2 - 3) + 'px';
     const height = text.offsetHeight + PAD_TOP + PAD_BOTTOM + 3;

@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
-import { t } from './i18n.js?v=1';
+import { t } from './i18n.js?v=1795224502';
 
 export function createInterior(container) {
   let renderer, scene, camera, controls, frame = null, iframe = null;

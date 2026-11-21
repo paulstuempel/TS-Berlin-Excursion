@@ -71,7 +71,10 @@ export const config = {
         locality: { range: 140, pitch: -50, heading: 354 },
       },
       interior: {
-        type: 'none',
+        type: 'gltf',
+        url: 'assets/berlin/interior.glb',   // Polycam Scan vom 21.11.2026
+        unlit: true,
+        ceilingCut: 0.35,     // Meter, die oben abgeschnitten werden, damit man von oben hineinsieht
         message: { de: 'Noch kein Scan.', en: 'No scan yet.' },
       },
     },

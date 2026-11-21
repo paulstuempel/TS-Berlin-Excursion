@@ -2,9 +2,9 @@
 // Sie stehen fest in der Ansicht (nicht im 3D-Raum), jede Stufe hat ihre eigenen.
 // Das Textfeld wächst aus dem Quadrat, möglichst um dessen Mitte herum.
 
-import { notes } from './notes.js?v=1795261607';
-import { notesEn } from './notes-en.js?v=1795261607';
-import { getLang } from './i18n.js?v=1795261607';
+import { notes } from './notes.js?v=1795278797';
+import { notesEn } from './notes-en.js?v=1795278797';
+import { getLang } from './i18n.js?v=1795278797';
 
 // Text eines Eintrags in der aktuellen Sprache, sonst Deutsch
 const textOf = (n, place) => (getLang() === 'en' ? notesEn[n.id]?.[place] : null) ?? n[place];

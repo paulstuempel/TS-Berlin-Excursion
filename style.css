@@ -334,7 +334,7 @@ html, body {
 #meta button:focus-visible { outline: 2px solid var(--black); outline-offset: 2px; }
 #meta [data-about] { text-align: center; }
 #meta .lang { display: flex; gap: 2px; }
-#meta .lang button { flex: 1; padding: 7px 0; text-align: center; font-size: 13px; font-weight: 600; letter-spacing: .02em; }
+#meta .lang button { flex: 1; padding: 7px 12px; text-align: center; font-size: 13px; font-weight: 600; letter-spacing: .02em; }
 /* Ist der Text offen, sitzt das Kreuz an der Stelle des About Knopfs */
 body.about-open #meta [data-about] { visibility: hidden; }
 body.about-open #meta .lang button { box-shadow: 0 0 0 1px var(--white); }

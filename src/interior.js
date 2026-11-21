@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
-import { t } from './i18n.js?v=1795278797';
+import { t } from './i18n.js?v=1795279106';
 
 export function createInterior(container) {
   let renderer, scene, camera, controls, frame = null, iframe = null;
@@ -74,12 +74,14 @@ export function createInterior(container) {
   }
 
   // Modell so platzieren, dass man von schräg oben in den Raum schaut (Puppenhaus-Blick)
-  function frameObject(obj) {
+  // turn = Grad, um die der Startblick um die senkrechte Achse gedreht wird
+  function frameObject(obj, turn = 0) {
     const box = new THREE.Box3().setFromObject(obj);
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
     const radius = Math.max(size.x, size.y, size.z) * 0.5;
-    const offset = new THREE.Vector3(radius * 0.9, radius * 1.1, radius * 1.4);
+    const offset = new THREE.Vector3(radius * 0.9, radius * 1.1, radius * 1.4)
+      .applyAxisAngle(new THREE.Vector3(0, 1, 0), (turn * Math.PI) / 180);
     home = { center, radius, offset, dist: offset.length() };
     step = 0;
     controls.target.copy(center);
@@ -147,7 +149,7 @@ export function createInterior(container) {
     scene.add(sun);
   }
 
-  async function loadGltf({ url, unlit, ceilingCut = 0.35 }) {
+  async function loadGltf({ url, unlit, ceilingCut = 0.35, turn = 0 }) {
     const gltf = await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(url);
     const model = gltf.scene;
 
@@ -170,7 +172,7 @@ export function createInterior(container) {
     });
     addLights();
     scene.add(model);
-    frameObject(model);
+    frameObject(model, turn);
   }
 
   async function loadPanorama({ url }) {

@@ -75,6 +75,7 @@ export const config = {
         url: 'assets/berlin/interior.glb',   // Polycam Scan vom 21.11.2026
         unlit: true,
         ceilingCut: 0.35,     // Meter, die oben abgeschnitten werden, damit man von oben hineinsieht
+        turn: 165,            // Startblick von der Eingangstür aus in den Raum (Grad)
         message: { de: 'Noch kein Scan.', en: 'No scan yet.' },
       },
     },
